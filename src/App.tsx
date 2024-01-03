@@ -1,56 +1,82 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import { useEffect, useState } from 'react';
 import './App.css';
+import {Bar} from './Component/Bar';
+import { PathDialog } from './Component/PathDialog';
+import { ElevationTypes } from './types/ElevationObj';
+// import { Heights } from './Component/Heights';
 
-function App() {
+function App() 
+{
+  
+  const [src, SetSrc] = useState<string>();
+  const [dest, SetDest] = useState<string>();
+  const [location, SetLocation] = useState<string>("");   
+  const [elevationsArr, setElevation] = useState<ElevationTypes[]>([]);
+
+  const setPoints = (src_lon:number, src_lat:number, dest_lon:number, dest_lat:number) => {
+    var Src = `${src_lat},${src_lon}`
+    var Dest = `${dest_lat},${dest_lon}`
+    DialogMod()
+    console.log(Src, Dest)
+    SetLocation(`${Src}|${Dest}`)
+  }
+  // fetch elevations ----------------------------------------------
+  useEffect(() => {
+    if(location != "")
+    {
+      console.log(`new location: ${location}`)
+      fetch(`http://localhost:5000/api/${location}`)
+      .then(res => res.json())
+      .then(data => {
+        try{
+          const elevationObj = data.data;
+          ;
+          if(elevationObj.status == "OK")
+          {
+            console.log("fucking good")
+            const results = elevationObj.results;
+            console.log(results)
+            setElevation([...elevationsArr, ...results]);
+          }
+          else{
+            console.log("fucking Error")
+          }
+          console.log("Raw data from API:", elevationObj)
+        }
+        catch{
+          console.log(data.error);
+        }
+      });
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if(elevationsArr.length > 0)
+    {
+      var i = 0
+      elevationsArr.forEach(elevationObj => {
+        console.log(`elevationObj_${i++}:`, elevationObj.elevation);
+      })
+    }
+  }, [elevationsArr]);
+
+  //------------------------------------------------------------------
+  
+  const [openDialog, SetOpen] = useState<boolean>(false);
+  function DialogMod()
+  {
+    SetOpen(!openDialog);
+    console.log(openDialog)
+  }
+  const [ShowHeights, SetShowHeight] = useState<boolean>(false)
+  function ShowHeightMod(){
+    SetShowHeight(!ShowHeights)
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+      <Bar DialogMod={DialogMod} ShowHeightMod={ShowHeightMod}/>
+      {openDialog && <PathDialog Open={openDialog} DialogMod={DialogMod} setPoints={setPoints}/>}
+      {/* {ShowHeights && <Heights ShowHeights={ShowHeights} ShowHeightMod={ShowHeightMod}/>} */}
     </div>
   );
 }

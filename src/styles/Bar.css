@@ -1,0 +1,8 @@
+.border{
+    border: 1px solid black;
+}
+.center{
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}

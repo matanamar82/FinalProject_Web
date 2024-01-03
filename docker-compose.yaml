@@ -1,0 +1,7 @@
+services:
+  maptiler:
+    image: maptiler
+    container_name: maptiler
+    ports: 
+    -3650:3650
+    mem_limit: 500m
