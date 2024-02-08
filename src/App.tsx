@@ -3,11 +3,17 @@ import './App.css';
 import {Bar} from './Component/Bar';
 import { PathDialog } from './Component/PathDialog';
 import { ElevationTypes } from './types/ElevationObj';
+import { MapBox } from './Component/MapBox';
 // import { Heights } from './Component/Heights';
 
 function App() 
 {
+  const [coordinateData, setCoordinateData] = useState(undefined);
+  const coordinatesTransfer = (data:any) => {
+    setCoordinateData(data);
+  }
   
+  const [IsConnect, setIsConnect] = useState(false);
   const [src, SetSrc] = useState<string>();
   const [dest, SetDest] = useState<string>();
   const [location, SetLocation] = useState<string>("");   
@@ -76,6 +82,8 @@ function App()
     <div className="App">
       <Bar DialogMod={DialogMod} ShowHeightMod={ShowHeightMod}/>
       {openDialog && <PathDialog Open={openDialog} DialogMod={DialogMod} setPoints={setPoints}/>}
+      <MapBox fetchFunction={coordinatesTransfer} setIsConnect={setIsConnect}/>      
+
       {/* {ShowHeights && <Heights ShowHeights={ShowHeights} ShowHeightMod={ShowHeightMod}/>} */}
     </div>
   );
