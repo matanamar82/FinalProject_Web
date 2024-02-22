@@ -1,10 +1,9 @@
-import {PinAction, PinModeActions} from 'map/pinModes/PinAction';
-import {PinMode} from 'map/pinModes/PinMode';
-import { MapEntityTypes} from 'map/types/mission/EntityTypes';
-
-import { RootState } from '../../app/store';
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PinAction, PinModeActions } from '../../Component/PinModes/PinAction';
+import { PinMode } from '../../Component/PinModes/PinMode';
+import { MapEntityTypes } from '../../types/EntityTypes';
+import { RootState } from '../store';
 
 const initialPinMode: PinMode = {
     action: PinModeActions.NONE,
@@ -31,7 +30,7 @@ export const pinModeSlice = createSlice({
     }
 })
 
-export const { setEntityMode, setActionMode, stopPinMode, startPinMode} = pinModeSlice.actions;
+export const { setEntityMode, setActionMode, stopPinMode, startPinMode } = pinModeSlice.actions;
 export const selectPinMode = (state: RootState) => state.pinMode;
 
 export default pinModeSlice.reducer;

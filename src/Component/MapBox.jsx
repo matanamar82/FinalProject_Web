@@ -3,7 +3,6 @@ import { Map, Marker, Source } from "react-map-gl";
 import FetchSelfData from "./FetchSelfData";
 import CenterMapBtn from "./CenterMapBtn";
 import maplibregl from "maplibre-gl";
-import { PinLocation } from "./PinOnMap";
 
 export const MapBox = ({ fetchFunction, setIsConnect }) => 
 {
@@ -35,7 +34,6 @@ export const MapBox = ({ fetchFunction, setIsConnect }) =>
         style={{ position: "absolute", height: "100%", width: "100vw" }}
         mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=eyVwLyAoQA708yp277Ye"
       >
-        {ClickE && <PinLocation e={ClickE}/>}
         <FetchSelfData
           isCenter={isCentered}
           center={(lat, lon, zoom, pitch, rot) =>

@@ -21,15 +21,19 @@ import FlightIcon from '@mui/icons-material/Flight';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import HeightIcon from '@mui/icons-material/Height';
 import '../styles/Bar.css';
-import Map from "react-map-gl";
+import Map, { useMap } from "react-map-gl";
 import { useState, useRef, useEffect } from 'react';
 import FetchSelfData from './FetchSelfData';
 import maplibregl from 'maplibre-gl';
 import CenterMapBtn from './CenterMapBtn';
+import { enterPinMode } from './PinModes/PinModeManager';
+import { map } from 'mathjs';
+import { entityTypes } from '../types/EntityTypes';
 
 const drawerWidth = 240;
 
 export const Bar = ({DialogMod, ShowHeightMod}:any) => {
+  const {current: map} = useMap();
   const [viewState, setViewState] = useState({
     longitude: 35,
     latitude: 32,
@@ -85,7 +89,7 @@ export const Bar = ({DialogMod, ShowHeightMod}:any) => {
             </ListItem>
             <Collapse in={ShowPathOptions}>
                 <List>
-                  <ListItemButton onClick={DialogMod}>
+                  <ListItemButton onClick={() => enterPinMode(map, entityTypes.LANDING_ZONE)}>
                     <ListItemText className='center' primary="לפי נ.צ ידועות"/>
                   </ListItemButton>
                   <ListItemButton>
