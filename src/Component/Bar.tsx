@@ -8,44 +8,32 @@ import {
   List, 
   ListItem, 
   ListItemButton, 
-  ListItemIcon, 
   ListItemText,
   Collapse, 
-  Button,
   Tooltip
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
-import DirectionsIcon from '@mui/icons-material/Directions';
 import FlightIcon from '@mui/icons-material/Flight';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import HeightIcon from '@mui/icons-material/Height';
 import '../styles/Bar.css';
-import Map, { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl";
 import { useState, useRef, useEffect } from 'react';
-import FetchSelfData from './FetchSelfData';
-import maplibregl from 'maplibre-gl';
-import CenterMapBtn from './CenterMapBtn';
 import { enterPinMode } from './PinModes/PinModeManager';
-import { map } from 'mathjs';
 import { entityTypes } from '../types/EntityTypes';
+import FlightLandIcon from '@mui/icons-material/FlightLand';
+import PinDropIcon from '@mui/icons-material/PinDrop';
 
 const drawerWidth = 240;
 
 export const Bar = ({DialogMod, ShowHeightMod}:any) => {
-  const {current: map} = useMap();
-  const [viewState, setViewState] = useState({
-    longitude: 35,
-    latitude: 32,
-    zoom: 5,
-    pitch: 0,
-  });
   const [Menu, SetMenu] = useState<boolean>(false);
-  function MenuStatus(){
-    SetMenu(!Menu);
-    SetShow(false);
-    SetShowOption(false);
-  }
+  // function MenuStatus(){
+  //   SetMenu(!Menu);
+  //   SetShow(false);
+  //   SetShowOption(false);
+  // }
   const [ShowPlane, SetShow] = useState<boolean>(false)
   function HandleShow(){
     SetShow(!ShowPlane);
@@ -60,9 +48,9 @@ export const Bar = ({DialogMod, ShowHeightMod}:any) => {
       <AppBar sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{justifyContent:'space-between'}}>
           <Typography variant='h5'>map</Typography>
-          <IconButton sx={{color:'white'}} onClick={() => {MenuStatus()}}>
+          {/* <IconButton sx={{color:'white'}} onClick={() => {MenuStatus()}}>
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -71,37 +59,17 @@ export const Bar = ({DialogMod, ShowHeightMod}:any) => {
         open={Menu}
         sx={{
             '& .MuiDrawer-paper': {
-              width: drawerWidth
-            },
-            
+              width: 200,
+            },  
           }}
           
       >
-
           <Toolbar />
           <List sx={{overflowY:'auto'}}>
             <ListItem sx={{justifyContent:'center'}}>
-              <Tooltip title="בחר מסלול טיסה" placement='left'>
-                <IconButton size='large' onClick={ShowOption}>
-                  <DirectionsIcon sx={{fontSize:'50px'}}/>
-                </IconButton>
-              </Tooltip>  
-            </ListItem>
-            <Collapse in={ShowPathOptions}>
-                <List>
-                  <ListItemButton onClick={() => enterPinMode(map, entityTypes.LANDING_ZONE)}>
-                    <ListItemText className='center' primary="לפי נ.צ ידועות"/>
-                  </ListItemButton>
-                  <ListItemButton>
-                    <ListItemText className='center' primary="סמן נקודות על המפה"/>
-                  </ListItemButton>
-                </List>
-            </Collapse>
-            <Divider />
-            <ListItem sx={{justifyContent:'center'}}>
               <Tooltip title="הצג מטוס" placement='left'>
                 <IconButton onClick={HandleShow}>
-                  <FlightIcon sx={{fontSize:'50px'}}/>
+                  <FlightIcon sx={{fontSize:'40px'}}/>
                 </IconButton>
               </Tooltip>
             </ListItem>
@@ -114,20 +82,21 @@ export const Bar = ({DialogMod, ShowHeightMod}:any) => {
             </Collapse>
             <Divider />
             <ListItem sx={{justifyContent:'center'}}>
-              <Tooltip title="חישוב גובה הצנחה" placement='left'>
+              <Tooltip title="בחר מסלול נחיתה" placement='left'>
+                <IconButton onClick={ShowOption}>
+                  <FlightLandIcon sx={{fontSize:'40px'}}/>
+                </IconButton>
+              </Tooltip>  
+            </ListItem>
+            <Divider />
+            <ListItem sx={{justifyContent:'center'}}>
+              <Tooltip title="בחר נקודת הצנחה" placement='left'>
                 <IconButton>
-                  <CalculateIcon sx={{fontSize:'50px'}}/>
+                  <PinDropIcon sx={{fontSize:'40px'}}/>
                 </IconButton>
               </Tooltip>             
             </ListItem>
             <Divider />
-            <ListItem sx={{justifyContent:'center'}}>
-              <Tooltip title="מפת גבהים" placement='left'>
-                <IconButton>
-                  <HeightIcon sx={{fontSize:'50px'}}/>
-                </IconButton>
-              </Tooltip>
-            </ListItem> 
           </List>
       </Drawer>
     </Box>

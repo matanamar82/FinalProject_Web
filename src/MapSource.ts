@@ -1,7 +1,7 @@
-import { AnyLayer } from "mapbox-gl";
+import { AnyLayer } from "react-map-gl";
 import { MapEntityTypes, entityTypes } from "./types/EntityTypes";
 import { Feature, GeoJsonProperties, Geometry } from "geojson";
-import { landingZoneLayer } from "./landingzone";
+import { landingZoneLayer } from "./LandingZone";
 
 export interface Source {
     id: MapEntityTypes;
@@ -17,4 +17,15 @@ export const entitySources = (mission?: Feature<Geometry, GeoJsonProperties>[]):
             layers: landingZoneLayer
         }
     ]
+};
+
+const sources = (
+    navigationProvider?: Feature<Geometry, GeoJsonProperties>[]
+) => {
+    return [
+        
+    ]
 }
+
+export {sources}
+
