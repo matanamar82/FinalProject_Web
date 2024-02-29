@@ -5,6 +5,8 @@ import { PathDialog } from './Component/PathDialog';
 import { ElevationTypes } from './types/ElevationObj';
 import { MapBox } from './Component/MapBox';
 import { useMapEventListener } from './hooks/useMapEventListener';
+import LandingZoneDialog from "./Component/LandingZoneDialog";
+
 // import { Heights } from './Component/Heights';
 
 function App() {
@@ -74,13 +76,18 @@ function App() {
   function ShowHeightMod() {
     SetShowHeight(!ShowHeights)
   }
+  const [barOption, setBarOption] = useState<string>('');
+  function barHandler(optionType: string){
+    console.log(optionType)
+    setBarOption(optionType)
+  }
   useMapEventListener();
   return (
     <div className="App">
-      <Bar DialogMod={DialogMod} ShowHeightMod={ShowHeightMod} />
+      <Bar DialogMod={DialogMod} ShowHeightMod={ShowHeightMod} barHandler={barHandler}/>
       {openDialog && <PathDialog Open={openDialog} DialogMod={DialogMod} setPoints={setPoints} />}
-      <MapBox fetchFunction={coordinatesTransfer} setIsConnect={setIsConnect} />
-
+      <MapBox fetchFunction={coordinatesTransfer} setIsConnect={setIsConnect} barOption={barOption} barHandler={barHandler}/>
+      {/* <LandingZoneDialog /> */}
       {/* {ShowHeights && <Heights ShowHeights={ShowHeights} ShowHeightMod={ShowHeightMod}/>} */}
     </div>
   );

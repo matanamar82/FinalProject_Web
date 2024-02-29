@@ -7,27 +7,18 @@ import {
   IconButton, 
   List, 
   ListItem, 
-  ListItemButton, 
   ListItemText,
   Collapse, 
   Tooltip
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import FlightIcon from '@mui/icons-material/Flight';
-import CalculateIcon from '@mui/icons-material/Calculate';
-import HeightIcon from '@mui/icons-material/Height';
 import '../styles/Bar.css';
-import { useMap } from "react-map-gl";
-import { useState, useRef, useEffect } from 'react';
-import { enterPinMode } from './PinModes/PinModeManager';
-import { entityTypes } from '../types/EntityTypes';
+import { useState } from 'react';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 
-const drawerWidth = 240;
-
-export const Bar = ({DialogMod, ShowHeightMod}:any) => {
+export const Bar = ({DialogMod, ShowHeightMod, barHandler}:any) => {
   const [Menu, SetMenu] = useState<boolean>(false);
   // function MenuStatus(){
   //   SetMenu(!Menu);
@@ -48,9 +39,6 @@ export const Bar = ({DialogMod, ShowHeightMod}:any) => {
       <AppBar sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{justifyContent:'space-between'}}>
           <Typography variant='h5'>map</Typography>
-          {/* <IconButton sx={{color:'white'}} onClick={() => {MenuStatus()}}>
-            <MenuIcon />
-          </IconButton> */}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -83,7 +71,7 @@ export const Bar = ({DialogMod, ShowHeightMod}:any) => {
             <Divider />
             <ListItem sx={{justifyContent:'center'}}>
               <Tooltip title="בחר מסלול נחיתה" placement='left'>
-                <IconButton onClick={ShowOption}>
+                <IconButton onClick={() => barHandler('LandingZone')}>
                   <FlightLandIcon sx={{fontSize:'40px'}}/>
                 </IconButton>
               </Tooltip>  
@@ -91,7 +79,7 @@ export const Bar = ({DialogMod, ShowHeightMod}:any) => {
             <Divider />
             <ListItem sx={{justifyContent:'center'}}>
               <Tooltip title="בחר נקודת הצנחה" placement='left'>
-                <IconButton>
+                <IconButton onClick={() => barHandler('Wpt')}>
                   <PinDropIcon sx={{fontSize:'40px'}}/>
                 </IconButton>
               </Tooltip>             

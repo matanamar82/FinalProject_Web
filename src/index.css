@@ -13,3 +13,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.Card{
+  width: 50vw;
+  height: 50vh;
+  cursor: move;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.TextField{
+  width: 10vw;
+}
+
+.closeBtn{
+  justify-content: end;
+  display: flex;
+}
+.content{
+  height: 80%;
+}
+.Border{
+  border: 1% solid black;
+}

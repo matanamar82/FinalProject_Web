@@ -9,10 +9,11 @@
 // import { Layer, Source } from "react-map-gl";
 
 import { Feature, FeatureCollection, Geometry } from "geojson";
+import { computeDestinationPoint, getDistance, getGreatCircleBearing, getRhumbLineBearing } from "geolib";
 import { CircleLayer, LineLayer } from "mapbox-gl";
-import { useEffect, useState } from "react";
-import { Layer, Source } from "react-map-gl";
-
+import { useEffect, useRef, useState } from "react";
+import { Layer, Source, useMap } from "react-map-gl";
+import { useLandingZoneCalc } from "./hooks/useLandingZoneCalc";
 
 // export const getEntities = () => {
 //     const ents = {
@@ -21,37 +22,55 @@ import { Layer, Source } from "react-map-gl";
         
 //     }
 // }
-
-const EntityLoader = ({point, lz_dialog_handler}:any) => {
-
-    // console.log(lngLat);
-    // const [PointsArr, setPointsArr] = useState<FeatureCollection[]>([])
+const EntityLoader = ({point, barOption, stopMap}:any) => {
+    const map = useMap()
     const [PointsArr, setPointsArr] = useState<Feature[]>([])
     const [LandingZoneLine, SetLandingZone] = useState<Geometry>({type: 'LineString', coordinates: []})
+    const {getElevations} = useLandingZoneCalc();
     useEffect(() => {
         if(point)
         {
-            if(PointsArr.length > 0)
-                setPointsArr([PointsArr[PointsArr.length - 1], {type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
+            if(barOption != '')
+            {
+                console.log(`PointsArr.length = ${PointsArr.length}`)
+                if(PointsArr.length === 0 && barOption === 'Wpt')
+                {
+                    setPointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
+                    // stopMap();
+                }
+                else if(PointsArr.length === 0)
+                    setPointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
+                else if((PointsArr.length + 1) === 2 && barOption === 'LandingZone')
+                {
+                    setPointsArr([PointsArr[PointsArr.length - 1], {type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])   
+                }
+                else if(barOption === 'Wpt')
+                    setPointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
+                console.log(point);
+            }
             else
-                setPointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
-            console.log(point);
+                alert('על מנת לדקור על המפה יש לבחור משימה קודם!')   
         }
     }, [point]) // מוסיף נקודה למסך דרך המערך
 
     useEffect(() => {
-        if(PointsArr.length >= 2)
+        if(PointsArr.length == 2)
         {
             const length = PointsArr.length
-            const Point1 = PointsArr[length - 2];
-            const Point2 = PointsArr[length - 1];
-            if(Point1.geometry.type === 'Point' && Point2.geometry.type === 'Point')
+            const SelfPosition = PointsArr[length - 2];
+            const DestinationPosition = PointsArr[length - 1];
+            if(SelfPosition.geometry.type === 'Point' && DestinationPosition.geometry.type === 'Point')
             {
-                const P1_Coordinates = Point1.geometry.coordinates
-                const P2_Coordinates = Point2.geometry.coordinates
-                console.log(`P1: ${P1_Coordinates}\nP2: ${P2_Coordinates}`)
-                if(P1_Coordinates !== P2_Coordinates)
-                    SetLandingZone({type: 'LineString', coordinates: [P1_Coordinates, P2_Coordinates]})
+                const Self_Coordinates = SelfPosition.geometry.coordinates
+                const Dest_Coordinates = DestinationPosition.geometry.coordinates
+
+                const result = getElevations(Self_Coordinates, Dest_Coordinates)
+
+                if(Self_Coordinates !== Dest_Coordinates)
+                {
+                    SetLandingZone({type: 'LineString', coordinates: [Self_Coordinates, Dest_Coordinates]})
+                    // setPointsArr([]);
+                }
             }
         }
     }, [PointsArr]) // מוסיף קו המחבר בין 2 הנקודות, אשר מסמנות את מסלול הנחיתה 
@@ -68,7 +87,7 @@ const EntityLoader = ({point, lz_dialog_handler}:any) => {
         id:'point',
         type: 'circle',
         paint: {
-            'circle-radius': 6,
+            'circle-radius': 5,
             'circle-color': 'black'
         }
     }
@@ -87,7 +106,7 @@ const EntityLoader = ({point, lz_dialog_handler}:any) => {
         },
         'paint': {
             'line-color': 'black',
-            'line-width': 6
+            'line-width': 10
         }
     }
     // const sandBoxEntities = useSelector(selectSandboxEntities);
