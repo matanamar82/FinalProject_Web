@@ -1,47 +1,117 @@
 import { Position } from "geojson";
-import { computeDestinationPoint, getDistance, getGreatCircleBearing } from "geolib";
-import { GeolibInputCoordinates } from "geolib/es/types";
-import { useState } from "react";
+import { computeDestinationPoint, getDistance, getGreatCircleBearing, getGreatCircleBearing as getRhumbLineBearing } from "geolib";
+import { useEffect, useState } from "react";
+
+// wing length = 25m
 
 export const useLandingZoneCalc = () => {
-    const [CenterPoints, setCenterPoints] = useState<GeolibInputCoordinates[]>([])
-    const [LeftWingPoints, setLeftWingPoints] = useState([])
-    const [RightWingPoints, setRightWingPoints] = useState([])
+    
+    const getElevations = async(selfCoordinates:Position, destCoordinates:Position) => {
+        const longDistance = getDistance(
+            {latitude: selfCoordinates[1], longitude: selfCoordinates[0]}, 
+            {latitude: destCoordinates[1], longitude: destCoordinates[0]})
 
-    const getElevations = (Self_Coordinates:Position, Dest_Coordinates:Position):void => {
-        setCenterPoints(getPointsInZone(Self_Coordinates, Dest_Coordinates))
+        const Azimuth = getRhumbLineBearing(
+            {latitude: selfCoordinates[1], longitude: selfCoordinates[0]}, 
+            {latitude: destCoordinates[1], longitude: destCoordinates[0]})
+        
+        console.log(`the azimuth is: ${Azimuth} degrees`)
+
+        console.log(`the distnace between p1 to p2 is: ${longDistance / 1000} km`)
+
+        const distanceFromPoint = longDistance / 60 // 60 points
+
+        // center 
+        const CenterPoints:string[] = getPointsInZone(selfCoordinates, destCoordinates, distanceFromPoint, Azimuth)
+        
+        // right wing
+        let { selfPoint: rightWingSelf, destPoint: rightWingDest } = getWingPoints(selfCoordinates, destCoordinates, Azimuth + 90);
+        const RightWingPoints:string[] = getPointsInZone(rightWingSelf, rightWingDest, distanceFromPoint, Azimuth);
+
+        // left wing
+        let {selfPoint: leftWingSelf, destPoint: leftWingDest} = getWingPoints(selfCoordinates, destCoordinates, Azimuth - 90);
+        const LeftWingPoints:string[] = getPointsInZone(leftWingSelf, leftWingDest, distanceFromPoint, Azimuth);
+        
+        const CenterElevation = await getElevationsArr(CenterPoints)
+        
+        const RightWingElevation = await getElevationsArr(RightWingPoints)
+
+        const LeftWingElevation = await getElevationsArr(LeftWingPoints)
+
+        return getAvgArr(CenterElevation, LeftWingElevation, RightWingElevation)
+        
     } // add the returning of elevations array, get the wingsPoints
 
-    const getPointsInZone = (Self_Coordinates:Position, Dest_Coordinates:Position): GeolibInputCoordinates[] => {
-        const distance = getDistance(
-            {latitude: Self_Coordinates[1], longitude: Self_Coordinates[0]}, 
-            {latitude: Dest_Coordinates[1], longitude: Dest_Coordinates[0]})
+    const getWingPoints = (selfCoordinates:Position, destCoordinates:Position, Azimuth:number) => {
+        let wingSelf = computeDestinationPoint(
+            {latitude: selfCoordinates[1], longitude: selfCoordinates[0]},
+            25,
+            Azimuth
+        ) 
+        let wingDest = computeDestinationPoint(
+            {latitude: destCoordinates[1], longitude: destCoordinates[0]},
+            25,
+            Azimuth
+        )
+        let selfPoint:Position = [wingSelf.longitude, wingSelf.latitude]
+        let destPoint:Position = [wingDest.longitude, wingDest.latitude]
+
+        return {selfPoint, destPoint}
+    }
+    const getPointsInZone = (selfCoordinates:Position, destCoordinates:Position, distanceFromPoint:number, Azimuth:number): string[] => {
+        
         // const Azimuth = (450 - ToDegrees * Math.atan((Dest_Coordinates[1] - Self_Coordinates[1]) / (Dest_Coordinates[0] - Self_Coordinates[0]))) % 360
-        const Azimuth = getGreatCircleBearing(
-            {latitude: Self_Coordinates[1], longitude: Self_Coordinates[0]}, 
-            {latitude: Dest_Coordinates[1], longitude: Dest_Coordinates[0]})
-        console.log(`P1: ${Self_Coordinates}\nP2: ${Dest_Coordinates}`)
-        console.log(`the distnace between p1 to p2 is: ${distance / 1000} km`)
+        console.log(`P1: ${selfCoordinates}\nP2: ${destCoordinates}`)
         console.log(`the azimuth is: ${Azimuth} degrees`)
         
-        const distanceFromPoint = distance / 60 // 60 points
-        const PointsInZone:GeolibInputCoordinates[] = [];
-        PointsInZone[0] = {latitude: Self_Coordinates[1], longitude: Self_Coordinates[0]}
-        PointsInZone[59] = {latitude: Dest_Coordinates[1], longitude: Dest_Coordinates[0]}
+        const PointsInZone:string[] = [];
+        // *****************************************************************
+        // selfCoordinates[0] === longitude 
+        // selfCoordinates[1] === latitude
+        // *****************************************************************
+
+        PointsInZone[0] = `${selfCoordinates[1]},${selfCoordinates[0]}|`
+        PointsInZone[59] = `${destCoordinates[1]},${destCoordinates[0]}|`
 
         for (let i = 1; i < 59; i++)
         {
-            PointsInZone[i] = computeDestinationPoint(
-                {latitude: Self_Coordinates[1], longitude: Self_Coordinates[0]}, 
+            const Point = computeDestinationPoint(
+                {latitude: selfCoordinates[1], longitude: selfCoordinates[0]}, 
                 distanceFromPoint * i,
                 Azimuth
             )
+            PointsInZone[i] = `${Point.latitude},${Point.longitude}|`
         }
-        console.log(PointsInZone)
-
         return PointsInZone
     }
     
+    const getElevationsArr = async (Points:string[]) => {
+        let pointsToApiFormat = Points.join('');
+        console.log("the arr is:")
+        console.log(Points)
+        try {
+            const response = await fetch(`http://localhost:5000/api/${pointsToApiFormat}`);
+            const data = await response.json();
+            console.log(data)
+        
+            if (data.data && data.data.status === "OK") {
+              return data.data.results;
+            } else {
+              console.log("Error");
+              return null;
+            }
+          } catch (error) {
+            console.log(error);
+            return null;
+          }
+    }
+
+    const getAvgArr = (CenterElevation:any[], RightWingElevation:any[], LeftWingElevation:any[]) => {
+        let avgArr:number[] = []
+        for(let i = 0; i<60; i++)
+            avgArr[i] = (CenterElevation[i].elevation + RightWingElevation[i].elevation + LeftWingElevation[i].elevation) / 3
+        return avgArr 
+    }
 
     return {getElevations}
 }

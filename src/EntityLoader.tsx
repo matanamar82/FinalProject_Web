@@ -64,7 +64,9 @@ const EntityLoader = ({point, barOption, stopMap}:any) => {
                 const Self_Coordinates = SelfPosition.geometry.coordinates
                 const Dest_Coordinates = DestinationPosition.geometry.coordinates
 
-                const result = getElevations(Self_Coordinates, Dest_Coordinates)
+                const result = getElevations(Self_Coordinates, Dest_Coordinates).then(res => console.log(res))
+                // console.log("the avg elevations are: ")
+                // console.log(result)
 
                 if(Self_Coordinates !== Dest_Coordinates)
                 {
