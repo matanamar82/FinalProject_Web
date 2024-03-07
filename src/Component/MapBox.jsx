@@ -4,9 +4,10 @@ import FetchSelfData from "./FetchSelfData";
 import CenterMapBtn from "./CenterMapBtn";
 import maplibregl from "maplibre-gl";
 import EntityLoader from "../EntityLoader";
+import LandingZoneDialog from "./LandingZoneDialog";
 
 
-export const MapBox = ({ fetchFunction, setIsConnect, barOption, barHandler }) => 
+export const MapBox = ({ setIsConnect, barOption, barHandler, showDialog }) => 
 {
   const [viewState, setViewState] = useState({
     longitude: 35,
@@ -19,10 +20,7 @@ export const MapBox = ({ fetchFunction, setIsConnect, barOption, barHandler }) =
   const [cursor, setCursor] = useState('crosshair')
   const mapRef = useRef();
   const map = useMap()
-  function stopMap()
-  {
-    console.log(map)
-  };
+
   return (
     <>
       <Map
@@ -40,7 +38,7 @@ export const MapBox = ({ fetchFunction, setIsConnect, barOption, barHandler }) =
         style={{ position: "absolute", height: "100%", width: "100vw"}}
         mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=eyVwLyAoQA708yp277Ye"
       >
-        <EntityLoader point={Point} barOption={barOption} stopMap={stopMap} barHandler={barHandler}/>
+        <EntityLoader point={Point} barOption={barOption} showDialog={showDialog} barHandler={barHandler}/>
         <FetchSelfData
           isCenter={isCentered}
           center={(lat, lon, zoom, pitch, rot) =>

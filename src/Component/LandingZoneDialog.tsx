@@ -1,46 +1,85 @@
 import { 
     Box, 
+    FormControl, 
     IconButton, 
+    InputAdornment, 
+    OutlinedInput, 
     TextField 
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import { LineChart } from '@mui/x-charts';
 import ClearIcon from '@mui/icons-material/Clear';
+import { max, min } from "mathjs";
+import { LandingZoneDialogTypes } from "../types/LandingZoneDialogTypes";
+import { Position } from "geojson";
+import { createTheme, ThemeProvider } from "@mui/material";
+import { jssPreset, StylesProvider } from "@mui/styles";
 
-const TextFields = [
-    {
-        "label": "אורך המנחת",
-        "id": "LandingZoneLength"
-    },
-    {
-        "label":"שם המנחת",
-        "id":"LandingZoneLength"
-    },
-    {
-        "label":"גובה מינימלי",
-        "id":"MinHeight"
-    },
-    {
-        "label":"גובה מקסימלי",
-        "id":"MaxHeight"
-    },
-    {
-        "label":"נקודת סיום",
-        "id":"landingZonePoint"
-    },
-    {
-        "label":"נקודת התחלה",
-        "id":"startPoint"
-    }
-]
 
-function LandingZoneDialog() {
+type Props = {
+    elevationsArr: number[],
+    distancesArr: number[],
+    distance: number,
+    selfCoordinates:Position,
+    destCoordinates:Position,
+    DialogMod: (mod: boolean) => void
+}
+
+function checkDistance(distance: number):boolean{
+    return (distance <= 3000)
+}
+
+function LandingZoneDialog({elevationsArr, distancesArr, distance, selfCoordinates, destCoordinates, DialogMod}:Props) {
+    const [TextFields, setTextField] = useState<LandingZoneDialogTypes[]>([])
     const [draggablePosition, setDraggablePosition] = useState<{ x: number, y: number }>({ x: 300, y: 230 })
     const handleDrag = (_e: DraggableEvent, data: DraggableData) => {
         setDraggablePosition({ x: Math.min(data.x), y: data.y })
     }
-
+    useEffect(() => {
+        setTextField([
+            {
+                "label": "אורך המנחת",
+                "id": "LandingZoneLength",
+                "value": distance
+            },
+            {
+                "label":"שם המנחת",
+                "id":"LandingZoneName",
+                "value": "LZ-1"
+            },
+            {
+                "label":"גובה מינימלי",
+                "id":"MinHeight",
+                "value": min(...elevationsArr)
+            },
+            {
+                "label":"גובה מקסימלי",
+                "id":"MaxHeight",
+                "value": max(...elevationsArr),
+            },
+            {
+                "label":"נקודת התחלה - lat",
+                "id":"endPoint",
+                "value": destCoordinates[1]
+            },
+            {
+                "label":"נקודת התחלה - lng",
+                "id":"startPoint",
+                "value": selfCoordinates[0]
+            },
+            {
+                "label":"נקודת סיום - lat",
+                "id":"endPoint",
+                "value": destCoordinates[1]
+            },
+            {
+                "label":"נקודת התחלה - lng",
+                "id":"startPoint",
+                "value": selfCoordinates[0]
+            }
+        ])
+    },[elevationsArr])
     return (
         <Draggable
             axis="both"
@@ -54,7 +93,7 @@ function LandingZoneDialog() {
                 sx={{backgroundColor:'wheat'}}
             >
                 <Box className='closeBtn' sx={{height:'15%', marginRight:'3%'}}>
-                    <IconButton><ClearIcon /></IconButton>
+                    <IconButton onClick={() => DialogMod(false)}><ClearIcon /></IconButton>
                 </Box>
                 <Box 
                     display={'flex'}
@@ -62,11 +101,12 @@ function LandingZoneDialog() {
                 >
                     <Box>
                         <LineChart
-                            
-                            xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+                            // ציר x = המרחקים
+                            xAxis={[{ data: distancesArr }]}
                             series={[
                                 {
-                                data: [2, 5.5, 2, 8.5, 1.5, 5],
+                                    // ציר y = הגבהים
+                                data: elevationsArr,
                                 area: true,
                                 },
                             ]}
@@ -81,7 +121,6 @@ function LandingZoneDialog() {
                                 flexWrap: 'wrap',
                                 justifyContent: 'center',
                                 alignItems:'center',
-                                // backgroundColor:'wheat'
                             }}
                         >
                             {TextFields.map((Filed, i) => {
@@ -90,20 +129,21 @@ function LandingZoneDialog() {
                                     key={i} 
                                     className="TextField"
                                     variant="filled"
-                                    sx={{ margin: '1.5%', backgroundColor: 'snow'}}
-                                    style={{direction: 'rtl'}}
+                                    sx={{ margin: '1.5%', backgroundColor: 'snow', direction: 'rtl'}}
                                     label={Filed.label} 
                                     id={Filed.id}
-                                    color='success'
+                                    color={Filed.id === 'LandingZoneLength' ? (checkDistance(Number(Filed.value)) ? 'success' : 'error') : 'success'}
+                                    value={Filed.value}
+                                    focused
                                     
                                 />
                             })}
                             <TextField 
                                 label="הערות"
                                 id="Comments"
-                                sx={{width: '84%', margin:'2%', backgroundColor: 'snow'}}
+                                sx={{width: '94%', margin:'2%', backgroundColor: 'snow', direction: 'rtl'}}
                                 variant="filled"
-                                dir="rtl"
+                                
                             />
                         </Box>
                     </Box>

@@ -1,6 +1,6 @@
 import { Position } from "geojson";
-import { computeDestinationPoint, getDistance, getGreatCircleBearing, getGreatCircleBearing as getRhumbLineBearing } from "geolib";
-import { useEffect, useState } from "react";
+import { computeDestinationPoint, getDistance, getRhumbLineBearing } from "geolib";
+import { number } from "mathjs";
 
 // wing length = 25m
 
@@ -17,9 +17,9 @@ export const useLandingZoneCalc = () => {
         
         console.log(`the azimuth is: ${Azimuth} degrees`)
 
-        console.log(`the distnace between p1 to p2 is: ${longDistance / 1000} km`)
 
-        const distanceFromPoint = longDistance / 60 // 60 points
+        const distanceFromPoint = longDistance / 59 // 60 points
+        console.log(`the distnace between p1 to p2 is: ${longDistance}`)
 
         // center 
         const CenterPoints:string[] = getPointsInZone(selfCoordinates, destCoordinates, distanceFromPoint, Azimuth)
@@ -38,10 +38,24 @@ export const useLandingZoneCalc = () => {
 
         const LeftWingElevation = await getElevationsArr(LeftWingPoints)
 
-        return getAvgArr(CenterElevation, LeftWingElevation, RightWingElevation)
-        
-    } // add the returning of elevations array, get the wingsPoints
+        const avgArr = getAvgArr(CenterElevation, LeftWingElevation, RightWingElevation)
 
+        const distanceArr:number[] = getDistanceArr(distanceFromPoint)
+
+        return {avgArr, distanceArr, longDistance};
+        
+    } 
+
+    const getDistanceArr = (distanceFromPoint:number):number[] => {
+        console.log(`the distnace between p1 to p2 is: ${distanceFromPoint}`)
+
+        let distanceArr:number[] = []
+        for(let i = 0; i<60; i++)
+        {
+            distanceArr[i] = number((distanceFromPoint * i).toFixed(3))
+        }
+        return distanceArr
+    }
     const getWingPoints = (selfCoordinates:Position, destCoordinates:Position, Azimuth:number) => {
         let wingSelf = computeDestinationPoint(
             {latitude: selfCoordinates[1], longitude: selfCoordinates[0]},
@@ -72,7 +86,6 @@ export const useLandingZoneCalc = () => {
 
         PointsInZone[0] = `${selfCoordinates[1]},${selfCoordinates[0]}|`
         PointsInZone[59] = `${destCoordinates[1]},${destCoordinates[0]}|`
-
         for (let i = 1; i < 59; i++)
         {
             const Point = computeDestinationPoint(
@@ -109,7 +122,7 @@ export const useLandingZoneCalc = () => {
     const getAvgArr = (CenterElevation:any[], RightWingElevation:any[], LeftWingElevation:any[]) => {
         let avgArr:number[] = []
         for(let i = 0; i<60; i++)
-            avgArr[i] = (CenterElevation[i].elevation + RightWingElevation[i].elevation + LeftWingElevation[i].elevation) / 3
+            avgArr[i] = number(((CenterElevation[i].elevation + RightWingElevation[i].elevation + LeftWingElevation[i].elevation) / 3).toFixed(3))
         return avgArr 
     }
 

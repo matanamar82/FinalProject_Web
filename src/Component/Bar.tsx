@@ -47,7 +47,7 @@ export const Bar = ({DialogMod, ShowHeightMod, barHandler}:any) => {
         open={Menu}
         sx={{
             '& .MuiDrawer-paper': {
-              width: 200,
+              width: 100,
             },  
           }}
           
