@@ -1,23 +1,13 @@
-// import { AnyLayer } from "mapbox-gl";
-// import { Entity, MapEntityTypes, entityTypes, externalMapEntitiesType } from "./types/EntityTypes";
-// import { Feature, FeatureCollection, GeoJsonProperties, Geometry } from "geojson";
-// import { useSelector } from "react-redux";
-// import { selectSandboxEntities } from "./state/reducers/SandBoxReducer";
-// import { useMapEventListener } from "./hooks/useMapEventListener";
-// import { useMemo } from "react";
-// import { GeoJsonTypes } from "./geojson/Constant";
-// import { Layer, Source } from "react-map-gl";
-
-import { Feature, FeatureCollection, Geometry } from "geojson";
+import { Feature, FeatureCollection } from "geojson";
 import { CircleLayer, LineLayer } from "mapbox-gl";
 import { useEffect, useState } from "react";
 import { Layer, Source} from "react-map-gl";
 import { useLandingZoneCalc } from "./hooks/useLandingZoneCalc";
 
-const EntityLoader = ({point, barOption, showDialog, barHandler}:any) => {
+const EntityLoader = ({point, barOption, showDialog, setBarOption}:any) => {
     const [landingZonePointsArr, setLandingZonePointsArr] = useState<Feature[]>([])
     const [wptPointsArr, setWptPointsArr] = useState<Feature[]>([])
-    const [LandingZoneLine, SetLandingZone] = useState<Geometry>({type: 'LineString', coordinates: []})
+    const [LandingZoneLineArr, SetLandingZone] = useState<Feature[]>([])
     const {getElevations} = useLandingZoneCalc();
     useEffect(() => {
         if(point)
@@ -26,30 +16,29 @@ const EntityLoader = ({point, barOption, showDialog, barHandler}:any) => {
             {
                 console.log(`LZArr.length = ${landingZonePointsArr.length}`)
                 console.log(`WPTArr.length = ${wptPointsArr.length}`)
-                if(wptPointsArr.length === 0 && barOption === 'Wpt')
+                if(barOption === 'Wpt')
                 {
                     setWptPointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
-                    barHandler('')
+                    setBarOption('');
                 }
-                else if(wptPointsArr.length === 1 && barOption === 'Wpt')
-                    setWptPointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
-                else if(landingZonePointsArr.length === 0 && barOption === 'LandingZone')
-                    setLandingZonePointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
-                else if(landingZonePointsArr.length === 1 && barOption === 'LandingZone')
+                // else if(landingZonePointsArr.length <= 1 && barOption === 'LandingZone')
+                //     setLandingZonePointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
+                else if(landingZonePointsArr.length <= 1 && barOption === 'LandingZone')
                 {
-                    setLandingZonePointsArr([landingZonePointsArr[landingZonePointsArr.length - 1], {type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])   
-                    barHandler('');
+                    setLandingZonePointsArr([...landingZonePointsArr, {type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])   
+                    if(landingZonePointsArr.length == 1)
+                    setBarOption('');
                 }
                 else if(landingZonePointsArr.length === 2 && barOption === 'LandingZone')
                 {
                     setLandingZonePointsArr([{type: 'Feature', geometry:{type: 'Point', coordinates: [point.lng, point.lat]}, properties: {}}])
-                    SetLandingZone({type: 'LineString', coordinates: []})
+                    // SetLandingZone({type: 'LineString', coordinates: []})
                 }
                 console.log(point);
-            }
-            else
-                alert('על מנת לדקור על המפה יש לבחור משימה קודם!')   
+            }   
         }
+        // else
+        //     alert('על מנת לדקור על המפה יש לבחור משימה קודם!')
     }, [point]) // מוסיף נקודה למסך דרך המערך
 
     useEffect(() => {
@@ -68,7 +57,7 @@ const EntityLoader = ({point, barOption, showDialog, barHandler}:any) => {
 
                 if(Self_Coordinates !== Dest_Coordinates)
                 {
-                    SetLandingZone({type: 'LineString', coordinates: [Self_Coordinates, Dest_Coordinates]})
+                    SetLandingZone([...LandingZoneLineArr, {type: 'Feature', geometry:{type: 'LineString', coordinates: [Self_Coordinates, Dest_Coordinates]}, properties: {}}])
                 }
             }
         }
@@ -100,11 +89,11 @@ const EntityLoader = ({point, barOption, showDialog, barHandler}:any) => {
         }
     };
 
-    const LandingZone: Feature = {
-        type: 'Feature',
-        properties: {},
-        geometry: LandingZoneLine
+    const LandingZone: FeatureCollection = {
+        type: 'FeatureCollection',
+        features: LandingZoneLineArr
     }
+
     const LandingZoneLayer: LineLayer = {
         'id': 'landing-zone',
         'type': 'line',

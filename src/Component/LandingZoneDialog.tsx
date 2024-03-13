@@ -1,9 +1,6 @@
 import { 
     Box, 
-    FormControl, 
     IconButton, 
-    InputAdornment, 
-    OutlinedInput, 
     TextField 
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -11,37 +8,32 @@ import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import { LineChart } from '@mui/x-charts';
 import ClearIcon from '@mui/icons-material/Clear';
 import { max, min } from "mathjs";
-import { LandingZoneDialogTypes } from "../types/LandingZoneDialogTypes";
-import { Position } from "geojson";
-import { createTheme, ThemeProvider } from "@mui/material";
-import { jssPreset, StylesProvider } from "@mui/styles";
+import { LandingZoneDialogPropsType, LandingZoneTextFieldsTypes } from "../types/LandingZoneDialogTypes";
 
 
 type Props = {
-    elevationsArr: number[],
-    distancesArr: number[],
-    distance: number,
-    selfCoordinates:Position,
-    destCoordinates:Position,
-    DialogMod: (mod: boolean) => void
+    dialog: LandingZoneDialogPropsType
+    SetOpen: (mod: boolean) => void
 }
 
 function checkDistance(distance: number):boolean{
-    return (distance <= 3000)
+    return (distance >= 1000 && distance <= 3000)
 }
 
-function LandingZoneDialog({elevationsArr, distancesArr, distance, selfCoordinates, destCoordinates, DialogMod}:Props) {
-    const [TextFields, setTextField] = useState<LandingZoneDialogTypes[]>([])
+function LandingZoneDialog({dialog, SetOpen}:Props) {
+    const [TextFields, setTextField] = useState<LandingZoneTextFieldsTypes[]>([])
     const [draggablePosition, setDraggablePosition] = useState<{ x: number, y: number }>({ x: 300, y: 230 })
     const handleDrag = (_e: DraggableEvent, data: DraggableData) => {
         setDraggablePosition({ x: Math.min(data.x), y: data.y })
     }
     useEffect(() => {
+        console.log("the dialog is: ")
+        console.log(dialog)
         setTextField([
             {
                 "label": "אורך המנחת",
                 "id": "LandingZoneLength",
-                "value": distance
+                "value": dialog.distance
             },
             {
                 "label":"שם המנחת",
@@ -51,35 +43,35 @@ function LandingZoneDialog({elevationsArr, distancesArr, distance, selfCoordinat
             {
                 "label":"גובה מינימלי",
                 "id":"MinHeight",
-                "value": min(...elevationsArr)
+                "value": min(...dialog.elevationsArr)
             },
             {
                 "label":"גובה מקסימלי",
                 "id":"MaxHeight",
-                "value": max(...elevationsArr),
+                "value": max(...dialog.elevationsArr),
             },
             {
                 "label":"נקודת התחלה - lat",
                 "id":"endPoint",
-                "value": destCoordinates[1]
+                "value": dialog.destCoordinates[1]
             },
             {
                 "label":"נקודת התחלה - lng",
                 "id":"startPoint",
-                "value": selfCoordinates[0]
+                "value": dialog.selfCoordinates[0]
             },
             {
                 "label":"נקודת סיום - lat",
                 "id":"endPoint",
-                "value": destCoordinates[1]
+                "value": dialog.destCoordinates[1]
             },
             {
                 "label":"נקודת התחלה - lng",
                 "id":"startPoint",
-                "value": selfCoordinates[0]
+                "value": dialog.selfCoordinates[0]
             }
         ])
-    },[elevationsArr])
+    },[dialog.elevationsArr])
     return (
         <Draggable
             axis="both"
@@ -93,7 +85,7 @@ function LandingZoneDialog({elevationsArr, distancesArr, distance, selfCoordinat
                 sx={{backgroundColor:'wheat'}}
             >
                 <Box className='closeBtn' sx={{height:'15%', marginRight:'3%'}}>
-                    <IconButton onClick={() => DialogMod(false)}><ClearIcon /></IconButton>
+                    <IconButton onClick={() => SetOpen(false)}><ClearIcon /></IconButton>
                 </Box>
                 <Box 
                     display={'flex'}
@@ -102,11 +94,11 @@ function LandingZoneDialog({elevationsArr, distancesArr, distance, selfCoordinat
                     <Box>
                         <LineChart
                             // ציר x = המרחקים
-                            xAxis={[{ data: distancesArr }]}
+                            xAxis={[{ data: dialog.distancesArr }]}
                             series={[
                                 {
                                     // ציר y = הגבהים
-                                data: elevationsArr,
+                                data: dialog.elevationsArr,
                                 area: true,
                                 },
                             ]}

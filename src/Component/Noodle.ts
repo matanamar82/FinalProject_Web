@@ -26,7 +26,7 @@ export const noodle = () => {
     {
         CalculateNoodle();
         for(let i = 0; i < AmountOfPoints; i++)
-            Noodle[i + 1] = TranslatePoint(selfData.Position, selfData.TrueHeading + GetCartesianAzim(Points[i]), GetCartesianDistance(Points[i]));
+            // Noodle[i + 1] = TranslatePoint(selfData.Position, selfData.TrueHeading + GetCartesianAzim(Points[i]), GetCartesianDistance(Points[i]));
         Noodle[0] = selfData.Position;
 
         return Noodle;
@@ -109,11 +109,11 @@ export const noodle = () => {
             let targetAngle = getRhumbLineBearing(tempNoodle[i + 1], target);
             let lineToTargetAngle = Math.abs(lineAngle - targetAngle);
             
-            if (lineToTargetAngle < SystemPropertiesManager.MaxAngleToDirect.Value)
-            {
-                isFound = !isFound;
-                break;
-            }
+            // if (lineToTargetAngle < SystemPropertiesManager.MaxAngleToDirect.Value)
+            // {
+            //     isFound = !isFound;
+            //     break;
+            // }
         }
 
         if (!isFound){

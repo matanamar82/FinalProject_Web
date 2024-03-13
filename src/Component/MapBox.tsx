@@ -1,13 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Map, Marker, Source, useMap } from "react-map-gl";
+import { Map, Marker, Source, useMap, Popup, MapRef } from "react-map-gl";
 import FetchSelfData from "./FetchSelfData";
 import CenterMapBtn from "./CenterMapBtn";
-import maplibregl from "maplibre-gl";
 import EntityLoader from "../EntityLoader";
-import LandingZoneDialog from "./LandingZoneDialog";
+import { Position } from "geojson";
 
+type Props = {
+  setIsConnect: (option:boolean) => void,
+  barOption: string,
+  showDialog: (dialogData:any, selfCoordinates:Position, destCoordinates:Position) => void,
+  setBarOption: (option:string) => void
+}
 
-export const MapBox = ({ setIsConnect, barOption, barHandler, showDialog }) => 
+export const MapBox = ({ setIsConnect, barOption, showDialog, setBarOption }:Props) => 
 {
   const [viewState, setViewState] = useState({
     longitude: 35,
@@ -15,19 +20,25 @@ export const MapBox = ({ setIsConnect, barOption, barHandler, showDialog }) =>
     zoom: 9,
     pitch: 0,
   });
-  const [isCentered, setIsCentered] = useState(true);
-  const [Point, setPoint] = useState();
+  const [isCentered, setIsCentered] = useState<boolean>(true);
+  const [Point, setPoint] = useState(null);
   const [cursor, setCursor] = useState('crosshair')
-  const mapRef = useRef();
-  const map = useMap()
+  const mapRef = useRef<MapRef>(null)
 
+  const handlePoint = (coordinates:any) => {
+    if(barOption != '')
+      setPoint(coordinates);
+    else
+      setPoint(null);
+  }
   return (
     <>
       <Map
-        mapLib={maplibregl}
+        // mapLib={mapboxgl}
         {...viewState}
         onMove={(evt) => {setViewState(evt.viewState)}}
-        onClick={(evt) => setPoint(evt.lngLat)}
+        onClick={(evt) => handlePoint(evt.lngLat)}
+        onDblClick={(evt) => alert(evt.lngLat)}
         ref={mapRef}
         initialViewState={{
           longitude: 35,
@@ -38,24 +49,23 @@ export const MapBox = ({ setIsConnect, barOption, barHandler, showDialog }) =>
         style={{ position: "absolute", height: "100%", width: "100vw"}}
         mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=eyVwLyAoQA708yp277Ye"
       >
-        <EntityLoader point={Point} barOption={barOption} showDialog={showDialog} barHandler={barHandler}/>
+        <EntityLoader point={Point} barOption={barOption} showDialog={showDialog} setBarOption={setBarOption}/>
         <FetchSelfData
           isCenter={isCentered}
-          center={(lat, lon, zoom, pitch, rot) =>
+          center={(lat:number, lon:number, zoom:number, pitch:number, rot:number) =>
           {
             setViewState({
               longitude: lon,
               latitude: lat,
               zoom: zoom,
               pitch: pitch,
-              bearing: rot,
             });
           }}
           setIsConnect={setIsConnect}
         />
         <CenterMapBtn
           isCenter={isCentered}
-          setIsCenter={(value) => setIsCentered(value)}
+          setIsCenter={(value:boolean) => setIsCentered(value)}
         />
       </Map>
 

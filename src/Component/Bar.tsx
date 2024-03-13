@@ -18,7 +18,7 @@ import { useState } from 'react';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 
-export const Bar = ({DialogMod, ShowHeightMod, barHandler}:any) => {
+export const Bar = ({setBarOption}:any) => {
   const [Menu, SetMenu] = useState<boolean>(false);
   // function MenuStatus(){
   //   SetMenu(!Menu);
@@ -71,7 +71,7 @@ export const Bar = ({DialogMod, ShowHeightMod, barHandler}:any) => {
             <Divider />
             <ListItem sx={{justifyContent:'center'}}>
               <Tooltip title="בחר מסלול נחיתה" placement='left'>
-                <IconButton onClick={() => barHandler('LandingZone')}>
+                <IconButton onClick={() => setBarOption('LandingZone')}>
                   <FlightLandIcon sx={{fontSize:'40px'}}/>
                 </IconButton>
               </Tooltip>  
@@ -79,7 +79,7 @@ export const Bar = ({DialogMod, ShowHeightMod, barHandler}:any) => {
             <Divider />
             <ListItem sx={{justifyContent:'center'}}>
               <Tooltip title="בחר נקודת הצנחה" placement='left'>
-                <IconButton onClick={() => barHandler('Wpt')}>
+                <IconButton onClick={() => setBarOption('Wpt')}>
                   <PinDropIcon sx={{fontSize:'40px'}}/>
                 </IconButton>
               </Tooltip>             
