@@ -20,10 +20,10 @@ export const entitySources = (mission?: Feature<Geometry, GeoJsonProperties>[]):
 };
 
 const sources = (
-    navigationProvider?: Feature<Geometry, GeoJsonProperties>[]
+    mission?: Feature<Geometry, GeoJsonProperties>[]
 ) => {
     return [
-        
+        ...entitySources(mission)
     ]
 }
 

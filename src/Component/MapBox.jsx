@@ -1,18 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Map, Marker, Source, useMap, Popup, MapRef } from "react-map-gl";
+import { useState, useRef } from "react";
+import { Map } from "react-map-gl";
 import FetchSelfData from "./FetchSelfData";
 import CenterMapBtn from "./CenterMapBtn";
 import EntityLoader from "../EntityLoader";
-import { Position } from "geojson";
+import MapLibreGL from "maplibre-gl";
 
-type Props = {
-  setIsConnect: (option:boolean) => void,
-  barOption: string,
-  showDialog: (dialogData:any, selfCoordinates:Position, destCoordinates:Position) => void,
-  setBarOption: (option:string) => void
-}
-
-export const MapBox = ({ setIsConnect, barOption, showDialog, setBarOption }:Props) => 
+export const MapBox = ({ setIsConnect, barOption, showDialog }) => 
 {
   const [viewState, setViewState] = useState({
     longitude: 35,
@@ -20,12 +13,12 @@ export const MapBox = ({ setIsConnect, barOption, showDialog, setBarOption }:Pro
     zoom: 9,
     pitch: 0,
   });
-  const [isCentered, setIsCentered] = useState<boolean>(true);
+  const [isCentered, setIsCentered] = useState(true);
   const [Point, setPoint] = useState(null);
   const [cursor, setCursor] = useState('crosshair')
-  const mapRef = useRef<MapRef>(null)
+  const mapRef = useRef(null)
 
-  const handlePoint = (coordinates:any) => {
+  const handlePoint = (coordinates) => {
     if(barOption != '')
       setPoint(coordinates);
     else
@@ -34,7 +27,7 @@ export const MapBox = ({ setIsConnect, barOption, showDialog, setBarOption }:Pro
   return (
     <>
       <Map
-        // mapLib={mapboxgl}
+        mapLib={MapLibreGL}
         {...viewState}
         onMove={(evt) => {setViewState(evt.viewState)}}
         onClick={(evt) => handlePoint(evt.lngLat)}
@@ -49,10 +42,10 @@ export const MapBox = ({ setIsConnect, barOption, showDialog, setBarOption }:Pro
         style={{ position: "absolute", height: "100%", width: "100vw"}}
         mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=eyVwLyAoQA708yp277Ye"
       >
-        <EntityLoader point={Point} barOption={barOption} showDialog={showDialog} setBarOption={setBarOption}/>
+        <EntityLoader point={Point} showDialog={showDialog}/>
         <FetchSelfData
           isCenter={isCentered}
-          center={(lat:number, lon:number, zoom:number, pitch:number, rot:number) =>
+          center={(lat, lon, zoom, pitch, rot) =>
           {
             setViewState({
               longitude: lon,
@@ -65,7 +58,7 @@ export const MapBox = ({ setIsConnect, barOption, showDialog, setBarOption }:Pro
         />
         <CenterMapBtn
           isCenter={isCentered}
-          setIsCenter={(value:boolean) => setIsCentered(value)}
+          setIsCenter={(value) => setIsCentered(value)}
         />
       </Map>
 

@@ -2,7 +2,7 @@ import { PointTypes } from "../types/PointTypes"
 import { SelfData } from "./Dto";
 import 'geolib'
 import { GeoCoordinate } from "./GeoCoordinate";
-import { getDistance, getRhumbLineBearing } from "geolib";
+import { computeDestinationPoint, getDistance, getRhumbLineBearing } from "geolib";
 
 
 export const noodle = () => {
@@ -11,22 +11,23 @@ export const noodle = () => {
     const ToDegrees: number = 180 / Math.PI;
     const ToRadian: number = Math.PI / 180;
     const gravity: number = 9.81;
+    const MaxAngleToDirect = 20;
     let Points:PointTypes[] = [];
     let selfData:SelfData;
     let Noodle:any = [];
     let RollAngle:number;
     
-    function NoodleCalc(currData:SelfData):void
+    function NoodleCalc(currData:SelfData):GeoCoordinate[]
     {
         selfData = currData;
-        CreateNoodle();
+        return CreateNoodle();
     }
 
     function CreateNoodle():GeoCoordinate[]
     {
         CalculateNoodle();
         for(let i = 0; i < AmountOfPoints; i++)
-            // Noodle[i + 1] = TranslatePoint(selfData.Position, selfData.TrueHeading + GetCartesianAzim(Points[i]), GetCartesianDistance(Points[i]));
+            Noodle[i + 1] = computeDestinationPoint(selfData.Position, GetCartesianDistance(Points[i]), selfData.TrueHeading + GetCartesianAzim(Points[i]));
         Noodle[0] = selfData.Position;
 
         return Noodle;
@@ -109,11 +110,11 @@ export const noodle = () => {
             let targetAngle = getRhumbLineBearing(tempNoodle[i + 1], target);
             let lineToTargetAngle = Math.abs(lineAngle - targetAngle);
             
-            // if (lineToTargetAngle < SystemPropertiesManager.MaxAngleToDirect.Value)
-            // {
-            //     isFound = !isFound;
-            //     break;
-            // }
+            if (lineToTargetAngle < MaxAngleToDirect)
+            {
+                isFound = !isFound;
+                break;
+            }
         }
 
         if (!isFound){
@@ -124,4 +125,5 @@ export const noodle = () => {
         noodle.push(target);
         return noodle 
     }
+    return NoodleCalc;
 }

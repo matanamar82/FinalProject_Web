@@ -1,8 +1,9 @@
-import { useMap, Source, Layer, SymbolLayer } from "react-map-gl";
+import { useMap, Source, Layer, SymbolLayer, LineLayer } from "react-map-gl";
 import { useEffect, useState, useRef } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import selfPlane from "../Assets/Plane1.png"
-import { Feature } from "geojson";
+import { Feature, Position } from "geojson";
+import { noodle } from "./Noodle";
 
 
 const selfDataClient = new W3CWebSocket("ws://localhost:5500/SelfData");
@@ -12,28 +13,6 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
   const isCenterRef = useRef();
 
   isCenterRef.current = isCenter;
-  const [selfDataSource, setSelfDataSource] = useState<Feature>({
-    type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: [],
-    },
-    properties: {},
-  });
-
-  const selfDataLayer:SymbolLayer = {
-    id: "selfData",
-    type: "symbol",
-    source: "selfData",
-    layout: {
-      "icon-allow-overlap": true,
-      "icon-rotation-alignment": "map",
-      "icon-rotate": ["get", "trueTrack"],
-      "icon-image": "selfPlane",
-      "icon-size": 0.02,
-    },
-    
-  };
 
   useEffect(() => {
     if(currMap){
@@ -89,6 +68,18 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
             data.TrueTrack
           );
         }
+        const noodleCalc = noodle();
+        const NoodleArr: Position[] = noodleCalc(data).map(GeoCoordinate => [GeoCoordinate.longitude, GeoCoordinate.latitude])
+        
+        const parsedData:Feature = {
+          type: "Feature",
+          geometry: {
+            type: "LineString",
+            coordinates: [...NoodleArr],
+          },
+          properties:{}
+        };
+        setNoodleSource(parsedData);
       };
       selfDataClient.onclose = () => {
         setIsConnect(false);
@@ -96,11 +87,59 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
       };
   };
 
+  const [selfDataSource, setSelfDataSource] = useState<Feature>({
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: [],
+    },
+    properties: {},
+  });
+
+  const selfDataLayer:SymbolLayer = {
+    id: "selfData",
+    type: "symbol",
+    source: "selfData",
+    layout: {
+      "icon-allow-overlap": true,
+      "icon-rotation-alignment": "map",
+      "icon-rotate": ["get", "trueTrack"],
+      "icon-image": "selfPlane",
+      "icon-size": 0.02,
+    },
+    
+  };
+
+  const [noodleSource, setNoodleSource] = useState<Feature>({
+    type: "Feature",
+    geometry: {
+      type: "LineString",
+      coordinates: [],
+    },
+    properties: {},
+  });
   
+  const [noodleLayer, setNoodleLayer] = useState<LineLayer>({
+    id: "noodle",
+    type: "line",
+    source: "noodle",
+    layout: {
+      "line-cap": "round",
+      "line-join": "round",
+    },
+    paint: {
+      "line-color": 'black',
+      "line-width": 4,
+    },
+  });
+
   return (
     <>
       <Source id="selfData" type="geojson" data={selfDataSource}>
         <Layer {...selfDataLayer} />
+      </Source>
+      <Source id="noodle" type="geojson" data={noodleSource}>
+        <Layer {...noodleLayer} />
       </Source>
     </>
   );

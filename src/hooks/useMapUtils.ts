@@ -2,6 +2,7 @@ import { Position } from "geojson";
 import { LngLat, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
 import { useMap } from "react-map-gl"
 import { EntityType, entityTypes } from "../types/EntityTypes";
+import { sources } from "../MapSource";
 
 export const useMapUtils = () => {
     const {current: map} = useMap();
@@ -15,7 +16,7 @@ export const useMapUtils = () => {
     //     if (map === undefined) throw Error;
         
     //     const features: MapboxGeoJSONFeature[] = map.queryRenderedFeatures(bbox, {
-    //         layers: layers().map(layer => layer.id);
+    //         layers: sources().map(src => src.layers.map(l => ({ ...l, source: src.id})))
     //     });
 
     //     const uniqueFeatures: MapboxGeoJSONFeature[] = features.filter(

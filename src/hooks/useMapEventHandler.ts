@@ -46,7 +46,7 @@ export const useMapEventHandler = () => {
                 });
                 return;
             }
-            console.log('dddddddddddddddddddddd');
+            // const closeFeatures = getFeaturesAroundPoint()
             //selectMapEntity(e.point);
         },
         [pinMode]
