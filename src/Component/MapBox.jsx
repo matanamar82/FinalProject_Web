@@ -20,7 +20,6 @@ export const MapBox = ({ setIsConnect, barOption, showDialog }) =>
   const [cursor, setCursor] = useState('crosshair')
   const mapRef = useRef(null)
   const { getFeaturesAroundPoint } = useMapUtils()
-  const dispatch = useDispatch();
 
   const handlePoint = (coordinates) =>
   {

@@ -1,5 +1,5 @@
 import { FeatureCollection } from "geojson";
-import { CircleLayer, LineLayer } from "mapbox-gl";
+import { CircleLayer } from "mapbox-gl";
 import { useEffect } from "react";
 import { Layer, Source, useMap } from "react-map-gl";
 import { useLandingZoneCalc } from "./hooks/useLandingZoneCalc";
@@ -8,14 +8,16 @@ import { Init, DecreaseClicks } from "./state/slices/PinModeSlice";
 import { AddLandingZone, AddWpt } from "./state/slices/EntitySlice";
 import usePinModeSlice from "./hooks/usePinModeSlice";
 import useEnities from "./hooks/useEntities";
-import { landingZoneLayer } from "./LandingZone";
+import { landingZoneLayer } from "./layers/LandingZoneLayer";
+import { WptPointsLayer } from "./layers/WptLayer";
+import { landingZonePointsLayer } from "./layers/LandingZonePointsLayer";
 
 const EntityLoader = ({ point, showDialog }: any) => {
     const { getElevations } = useLandingZoneCalc();
     const dispatch = useDispatch();
-    const {Option, ClicksAmount, points} = usePinModeSlice();
-    const {Wpts, LandingZones} = useEnities();
-    const {current: map} = useMap();
+    const { Option, ClicksAmount, points } = usePinModeSlice();
+    const { Wpts, LandingZones } = useEnities();
+    const { current: map } = useMap();
 
     useEffect(() => {
         console.log(map)
@@ -24,7 +26,7 @@ const EntityLoader = ({ point, showDialog }: any) => {
                 // console.log(`LZarr.length = ${points.length}`)
                 // console.log(`WPTarr.length = ${wptPointsArr.length}`)
                 if (Option === 'Wpt') {
-                    dispatch(AddWpt({ type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat]}, properties: {} }))
+                    dispatch(AddWpt({ type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat] }, properties: {} }))
                     dispatch(Init());
                 }
                 else if (ClicksAmount > 0 && Option === 'LandingZone') {
@@ -51,8 +53,7 @@ const EntityLoader = ({ point, showDialog }: any) => {
                 const result = getElevations(Self_Coordinates, Dest_Coordinates)
                 showDialog(result, Self_Coordinates, Dest_Coordinates)
 
-                if (Self_Coordinates !== Dest_Coordinates) 
-                {
+                if (Self_Coordinates !== Dest_Coordinates) {
                     dispatch(AddLandingZone({ type: 'Feature', geometry: { type: 'LineString', coordinates: [Self_Coordinates, Dest_Coordinates] }, properties: {} }))
                 }
             }
@@ -74,29 +75,11 @@ const EntityLoader = ({ point, showDialog }: any) => {
         features: LandingZones
     }
 
-    const wptPointsLayer: CircleLayer = {
-        id: 'wpt-point',
-        type: 'circle',
-        paint: {
-            'circle-radius': 5,
-            'circle-color': 'black'
-        }
-    };
-
-    const landingZonePointsLayer: CircleLayer = {
-        id: 'landing-zone-point',
-        type: 'circle',
-        paint: {
-            'circle-radius': 5,
-            'circle-color': 'black'
-        }
-    };
-
 
     return (
         <>
             <Source id="WptPoints" type="geojson" data={geojsonWpt}>
-                <Layer {...wptPointsLayer} />
+                <Layer {...WptPointsLayer} />
             </Source>
             <Source id="landingZonePoints" type="geojson" data={geojsonLZ}>
                 <Layer {...landingZonePointsLayer} />

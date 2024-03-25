@@ -1,7 +1,5 @@
-import { Position } from "geojson";
-import { LngLat, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
-import { MapRef, useMap } from "react-map-gl"
-import { EntityType, entityTypes } from "../types/EntityTypes";
+import { MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
+import { MapRef } from "react-map-gl"
 import { sources } from "../MapSource";
 
 export const useMapUtils = () => {
