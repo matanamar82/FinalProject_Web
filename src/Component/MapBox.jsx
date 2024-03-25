@@ -4,6 +4,8 @@ import FetchSelfData from "./FetchSelfData";
 import CenterMapBtn from "./CenterMapBtn";
 import EntityLoader from "../EntityLoader";
 import MapLibreGL from "maplibre-gl";
+import { useDispatch } from "react-redux";
+import { useMapUtils } from "../hooks/useMapUtils";
 
 export const MapBox = ({ setIsConnect, barOption, showDialog }) => 
 {
@@ -17,9 +19,12 @@ export const MapBox = ({ setIsConnect, barOption, showDialog }) =>
   const [Point, setPoint] = useState(null);
   const [cursor, setCursor] = useState('crosshair')
   const mapRef = useRef(null)
+  const { getFeaturesAroundPoint } = useMapUtils()
+  const dispatch = useDispatch();
 
-  const handlePoint = (coordinates) => {
-    if(barOption != '')
+  const handlePoint = (coordinates) =>
+  {
+    if (barOption != '')
       setPoint(coordinates);
     else
       setPoint(null);
@@ -28,21 +33,21 @@ export const MapBox = ({ setIsConnect, barOption, showDialog }) =>
     <>
       <Map
         mapLib={MapLibreGL}
-        {...viewState}
-        onMove={(evt) => {setViewState(evt.viewState)}}
-        onClick={(evt) => handlePoint(evt.lngLat)}
-        onDblClick={(evt) => alert(evt.lngLat)}
         ref={mapRef}
+        {...viewState}
         initialViewState={{
           longitude: 35,
           latitude: 31,
           zoom: 9,
         }}
         cursor={cursor}
-        style={{ position: "absolute", height: "100%", width: "100vw"}}
+        style={{ position: "absolute", height: "100%", width: "100vw" }}
         mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=eyVwLyAoQA708yp277Ye"
+        onMove={(evt) => { setViewState(evt.viewState) }}
+        onClick={(evt) => handlePoint(evt.lngLat)}
+        onDblClick={(evt) => getFeaturesAroundPoint(mapRef.current, evt.point)}
       >
-        <EntityLoader point={Point} showDialog={showDialog}/>
+        <EntityLoader point={Point} showDialog={showDialog} />
         <FetchSelfData
           isCenter={isCentered}
           center={(lat, lon, zoom, pitch, rot) =>

@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 import { useDispatch } from 'react-redux';
-import { LandingZone, Wpt } from '../state/pinModeSlice/pinModeSlice';
+import { LandingZone, Wpt } from '../state/slices/PinModeSlice';
 
 export const Bar = () => {
   const dispatch = useDispatch();

@@ -27,8 +27,8 @@ function LandingZoneDialog({dialog, SetOpen}:Props) {
         setDraggablePosition({ x: Math.min(data.x), y: data.y })
     }
     useEffect(() => {
-        console.log("the dialog is: ")
-        console.log(dialog)
+        // console.log("the dialog is: ")
+        // console.log(dialog)
         setTextField([
             {
                 "label": "אורך המנחת",
@@ -66,7 +66,7 @@ function LandingZoneDialog({dialog, SetOpen}:Props) {
                 "value": dialog.destCoordinates[1]
             },
             {
-                "label":"נקודת התחלה - lng",
+                "label":"נקודת סיום - lng",
                 "id":"startPoint",
                 "value": dialog.selfCoordinates[0]
             }

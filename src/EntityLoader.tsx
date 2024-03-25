@@ -1,35 +1,37 @@
-import { Feature, FeatureCollection } from "geojson";
+import { FeatureCollection } from "geojson";
 import { CircleLayer, LineLayer } from "mapbox-gl";
-import { useEffect, useState } from "react";
-import { Layer, Source } from "react-map-gl";
+import { useEffect } from "react";
+import { Layer, Source, useMap } from "react-map-gl";
 import { useLandingZoneCalc } from "./hooks/useLandingZoneCalc";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "./state/stores/Store";
-import { Init, DecreaseClicks } from "./state/pinModeSlice/pinModeSlice";
+import { useDispatch } from "react-redux";
+import { Init, DecreaseClicks } from "./state/slices/PinModeSlice";
+import { AddLandingZone, AddWpt } from "./state/slices/EntitySlice";
+import usePinModeSlice from "./hooks/usePinModeSlice";
+import useEnities from "./hooks/useEntities";
+import { landingZoneLayer } from "./LandingZone";
 
 const EntityLoader = ({ point, showDialog }: any) => {
-    const [wptPointsArr, setWptPointsArr] = useState<Feature[]>([])
-    const [LandingZoneLineArr, SetLandingZone] = useState<Feature[]>([])
     const { getElevations } = useLandingZoneCalc();
-    const Option = useSelector((state: RootState) => state.pinMode.option);
-    const ClicksAmount = useSelector((state: RootState) => state.pinMode.numberOfClicks);
-    const points = useSelector((state: RootState) => state.pinMode.points)
     const dispatch = useDispatch();
-    
+    const {Option, ClicksAmount, points} = usePinModeSlice();
+    const {Wpts, LandingZones} = useEnities();
+    const {current: map} = useMap();
+
     useEffect(() => {
+        console.log(map)
         if (point && ClicksAmount !== 0) {
             if (Option != '') {
                 // console.log(`LZarr.length = ${points.length}`)
                 // console.log(`WPTarr.length = ${wptPointsArr.length}`)
                 if (Option === 'Wpt') {
-                    setWptPointsArr([{ type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat] }, properties: {} }])
+                    dispatch(AddWpt({ type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat]}, properties: {} }))
                     dispatch(Init());
                 }
                 else if (ClicksAmount > 0 && Option === 'LandingZone') {
-                    dispatch(DecreaseClicks({ 
-                        option: Option, 
-                        numberOfClicks: ClicksAmount, 
-                        points: [...points, { type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat] }, properties: {} }] 
+                    dispatch(DecreaseClicks({
+                        option: Option,
+                        numberOfClicks: ClicksAmount,
+                        points: [...points, { type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat] }, properties: {} }]
                     }))
                 }
                 // console.log(point);
@@ -49,12 +51,12 @@ const EntityLoader = ({ point, showDialog }: any) => {
                 const result = getElevations(Self_Coordinates, Dest_Coordinates)
                 showDialog(result, Self_Coordinates, Dest_Coordinates)
 
-                if (Self_Coordinates !== Dest_Coordinates) {
-                    SetLandingZone([...LandingZoneLineArr, { type: 'Feature', geometry: { type: 'LineString', coordinates: [Self_Coordinates, Dest_Coordinates] }, properties: {} }])
+                if (Self_Coordinates !== Dest_Coordinates) 
+                {
+                    dispatch(AddLandingZone({ type: 'Feature', geometry: { type: 'LineString', coordinates: [Self_Coordinates, Dest_Coordinates] }, properties: {} }))
                 }
             }
             dispatch(Init())
-            //setLandingZonePointsArr([])
         }
     }, [points]) // מוסיף קו המחבר בין 2 הנקודות, אשר מסמנות את מסלול הנחיתה 
 
@@ -64,14 +66,14 @@ const EntityLoader = ({ point, showDialog }: any) => {
     };
     const geojsonWpt: FeatureCollection = {
         type: 'FeatureCollection',
-        features: wptPointsArr
+        features: Wpts
     };
 
     const LandingZoneLine: FeatureCollection = {
         type: 'FeatureCollection',
-        features: LandingZoneLineArr
+        features: LandingZones
     }
-    
+
     const wptPointsLayer: CircleLayer = {
         id: 'wpt-point',
         type: 'circle',
@@ -90,18 +92,6 @@ const EntityLoader = ({ point, showDialog }: any) => {
         }
     };
 
-    const LandingZoneLayer: LineLayer = {
-        'id': 'landing-zone',
-        'type': 'line',
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': 'black',
-            'line-width': 10
-        }
-    }
 
     return (
         <>
@@ -112,7 +102,7 @@ const EntityLoader = ({ point, showDialog }: any) => {
                 <Layer {...landingZonePointsLayer} />
             </Source>
             <Source id="landingZoneLine" type="geojson" data={LandingZoneLine}>
-                <Layer {...LandingZoneLayer} />
+                <Layer {...landingZoneLayer} />
             </Source>
         </>
     )

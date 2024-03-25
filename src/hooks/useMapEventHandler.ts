@@ -17,7 +17,7 @@ export interface AttachedLineStringEntity {
 }
 
 export const useMapEventHandler = () => {
-    // const { getFeaturesAroundPoint} = useMapUtils();
+    const { getFeaturesAroundPoint} = useMapUtils();
     const { setMapCursor, mapCursor } = useMapCursor();
     const { pinMode } = usePinMode();
     const { draw } = useMapDraw();

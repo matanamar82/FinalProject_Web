@@ -1,31 +1,32 @@
 import { Position } from "geojson";
 import { LngLat, MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
-import { useMap } from "react-map-gl"
+import { MapRef, useMap } from "react-map-gl"
 import { EntityType, entityTypes } from "../types/EntityTypes";
 import { sources } from "../MapSource";
 
 export const useMapUtils = () => {
-    const {current: map} = useMap();
+    const getFeaturesAroundPoint = (map: MapRef, point: mapboxgl.Point): MapboxGeoJSONFeature[] => {
+        console.log(map);
 
-    // const getFeaturesAroundPoint = (point: mapboxgl.Point): MapboxGeoJSONFeature[] => {
-    //     const bbox: [PointLike, PointLike] = [
-    //         [point.x - 5, point.y - 5],
-    //         [point.x + 5, point.y + 5]
-    //     ];
+        const bbox: [PointLike, PointLike] = [
+            [point.x - 5, point.y - 5],
+            [point.x + 5, point.y + 5]
+        ];
 
-    //     if (map === undefined) throw Error;
-        
-    //     const features: MapboxGeoJSONFeature[] = map.queryRenderedFeatures(bbox, {
-    //         layers: sources().map(src => src.layers.map(l => ({ ...l, source: src.id})))
-    //     });
+        if (map === undefined) throw Error;
+    
+        const features: MapboxGeoJSONFeature[] = map.queryRenderedFeatures(bbox, {
+            layers: sources().map(src => src.layers.id)
+        });
 
-    //     const uniqueFeatures: MapboxGeoJSONFeature[] = features.filter(
-    //         (value: MapboxGeoJSONFeature, index: number, array: MapboxGeoJSONFeature[]) => 
-    //             array.findIndex((item: MapboxGeoJSONFeature) => item.id === value.id) === index
-    //     );
+        console.log(features)
+        // const uniqueFeatures: MapboxGeoJSONFeature[] = features.filter(
+        //     (value: MapboxGeoJSONFeature, index: number, array: MapboxGeoJSONFeature[]) => 
+        //         array.findIndex((item: MapboxGeoJSONFeature) => item.id === value.id) === index
+        // );
 
-    //     return uniqueFeatures;
-    // };
+        return features;
+    };
 
     // const findPositionCoordinateIndex = (coordinates: LineStringPoint[], position: Position) => {
     //     return coordinates.findIndex(
@@ -50,5 +51,5 @@ export const useMapUtils = () => {
     //     return entityType !== entityTypes.ROUTE ? newPoint: {...newPoint, name: 'POINT_NAME'};
     // };
 
-    // return {getFeaturesAroundPoint};
+    return { getFeaturesAroundPoint };
 };
