@@ -17,7 +17,7 @@ export const useMapUtils = () => {
             layers: sources().map(src => src.layers.id)
         });
 
-        console.log(features)
+        // console.log(features)
         // const uniqueFeatures: MapboxGeoJSONFeature[] = features.filter(
         //     (value: MapboxGeoJSONFeature, index: number, array: MapboxGeoJSONFeature[]) => 
         //         array.findIndex((item: MapboxGeoJSONFeature) => item.id === value.id) === index

@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import pinModeReducer from '../slices/PinModeSlice';
+import pinModeSlice from '../slices/PinModeSlice';
 import EntitySlice from "../slices/EntitySlice";
+import DialogsSlice from "../slices/DialogsSlice";
 
 export const Store = configureStore({
     reducer: {
-        pinMode: pinModeReducer,
-        Entity: EntitySlice
+        pinMode: pinModeSlice,
+        Entity: EntitySlice,
+        dialogs: DialogsSlice,
     },
 });
 

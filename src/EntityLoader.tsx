@@ -17,19 +17,19 @@ const EntityLoader = ({ point, showDialog }: any) => {
     const dispatch = useDispatch();
     const { Option, ClicksAmount, points } = usePinModeSlice();
     const { Wpts, LandingZones } = useEnities();
-    const { current: map } = useMap();
 
     useEffect(() => {
-        console.log(map)
         if (point && ClicksAmount !== 0) {
             if (Option != '') {
                 // console.log(`LZarr.length = ${points.length}`)
                 // console.log(`WPTarr.length = ${wptPointsArr.length}`)
                 if (Option === 'Wpt') {
-                    dispatch(AddWpt({ type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat] }, properties: {} }))
+                    console.log(Wpts.length)
+                    dispatch(AddWpt({ type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat] }, properties: {}, id: Wpts.length }))
                     dispatch(Init());
                 }
                 else if (ClicksAmount > 0 && Option === 'LandingZone') {
+                    console.log(LandingZones.length)
                     dispatch(DecreaseClicks({
                         option: Option,
                         numberOfClicks: ClicksAmount,
@@ -54,7 +54,7 @@ const EntityLoader = ({ point, showDialog }: any) => {
                 showDialog(result, Self_Coordinates, Dest_Coordinates)
 
                 if (Self_Coordinates !== Dest_Coordinates) {
-                    dispatch(AddLandingZone({ type: 'Feature', geometry: { type: 'LineString', coordinates: [Self_Coordinates, Dest_Coordinates] }, properties: {} }))
+                    dispatch(AddLandingZone({ type: 'Feature', geometry: { type: 'LineString', coordinates: [Self_Coordinates, Dest_Coordinates] }, properties: {}, id: LandingZones.length }))
                 }
             }
             dispatch(Init())

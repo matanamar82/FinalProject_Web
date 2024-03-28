@@ -28,9 +28,9 @@ const EntitySlice = createSlice({
         AddWpt: (state, action:PayloadAction<Feature>) => {
             state.Wpts.push(action.payload)
         },
-        GetEntity: (state, action:PayloadAction<any>) => {
-            // printPoint(action.payload)
-        }
+        // GetEntity: (state, action:PayloadAction<any>) => {
+        //     // printPoint(action.payload)
+        // }
     }
 })
 

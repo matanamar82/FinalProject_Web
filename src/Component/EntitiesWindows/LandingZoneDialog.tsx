@@ -1,14 +1,14 @@
-import { 
-    Box, 
-    IconButton, 
-    TextField 
+import {
+    Box,
+    IconButton,
+    TextField
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import { LineChart } from '@mui/x-charts';
 import ClearIcon from '@mui/icons-material/Clear';
 import { max, min } from "mathjs";
-import { LandingZoneDialogPropsType, LandingZoneTextFieldsTypes } from "../types/LandingZoneDialogTypes";
+import { LandingZoneDialogPropsType, LandingZoneTextFieldsTypes } from "../../types/LandingZoneDialogTypes";
 
 
 type Props = {
@@ -16,11 +16,11 @@ type Props = {
     SetOpen: (mod: boolean) => void
 }
 
-function checkDistance(distance: number):boolean{
+function checkDistance(distance: number): boolean {
     return (distance >= 1000 && distance <= 3000)
 }
 
-function LandingZoneDialog({dialog, SetOpen}:Props) {
+function LandingZoneDialog({ dialog, SetOpen }: Props) {
     const [TextFields, setTextField] = useState<LandingZoneTextFieldsTypes[]>([])
     const [draggablePosition, setDraggablePosition] = useState<{ x: number, y: number }>({ x: 300, y: 230 })
     const handleDrag = (_e: DraggableEvent, data: DraggableData) => {
@@ -36,42 +36,42 @@ function LandingZoneDialog({dialog, SetOpen}:Props) {
                 "value": dialog.distance
             },
             {
-                "label":"שם המנחת",
-                "id":"LandingZoneName",
+                "label": "שם המנחת",
+                "id": "LandingZoneName",
                 "value": "LZ-1"
             },
             {
-                "label":"גובה מינימלי",
-                "id":"MinHeight",
+                "label": "גובה מינימלי",
+                "id": "MinHeight",
                 "value": min(...dialog.elevationsArr)
             },
             {
-                "label":"גובה מקסימלי",
-                "id":"MaxHeight",
+                "label": "גובה מקסימלי",
+                "id": "MaxHeight",
                 "value": max(...dialog.elevationsArr),
             },
             {
-                "label":"נקודת התחלה - lat",
-                "id":"endPoint",
+                "label": "נקודת התחלה - lat",
+                "id": "endPoint",
                 "value": dialog.destCoordinates[1]
             },
             {
-                "label":"נקודת התחלה - lng",
-                "id":"startPoint",
+                "label": "נקודת התחלה - lng",
+                "id": "startPoint",
                 "value": dialog.selfCoordinates[0]
             },
             {
-                "label":"נקודת סיום - lat",
-                "id":"endPoint",
+                "label": "נקודת סיום - lat",
+                "id": "endPoint",
                 "value": dialog.destCoordinates[1]
             },
             {
-                "label":"נקודת סיום - lng",
-                "id":"startPoint",
+                "label": "נקודת סיום - lng",
+                "id": "startPoint",
                 "value": dialog.selfCoordinates[0]
             }
         ])
-    },[dialog.elevationsArr])
+    }, [dialog.elevationsArr])
     return (
         <Draggable
             axis="both"
@@ -82,12 +82,12 @@ function LandingZoneDialog({dialog, SetOpen}:Props) {
             <Box
                 className='Card'
                 borderRadius={5}
-                sx={{backgroundColor:'wheat'}}
+                sx={{ backgroundColor: 'wheat' }}
             >
-                <Box className='closeBtn' sx={{height:'15%', marginRight:'3%'}}>
+                <Box className='closeBtn' sx={{ height: '15%', marginRight: '3%' }}>
                     <IconButton onClick={() => SetOpen(false)}><ClearIcon /></IconButton>
                 </Box>
-                <Box 
+                <Box
                     display={'flex'}
                     height={'85%'}
                 >
@@ -98,8 +98,8 @@ function LandingZoneDialog({dialog, SetOpen}:Props) {
                             series={[
                                 {
                                     // ציר y = הגבהים
-                                data: dialog.elevationsArr,
-                                area: true,
+                                    data: dialog.elevationsArr,
+                                    area: true,
                                 },
                             ]}
                             width={370}
@@ -107,35 +107,35 @@ function LandingZoneDialog({dialog, SetOpen}:Props) {
                         />
                     </Box>
                     <Box>
-                        <Box 
+                        <Box
                             sx={{
                                 display: 'flex',
                                 flexWrap: 'wrap',
                                 justifyContent: 'center',
-                                alignItems:'center',
+                                alignItems: 'center',
                             }}
                         >
                             {TextFields.map((Filed, i) => {
-                                console.log(Filed)
-                                return <TextField 
-                                    key={i} 
+                                // console.log(Filed)
+                                return <TextField
+                                    key={i}
                                     className="TextField"
                                     variant="filled"
-                                    sx={{ margin: '1.5%', backgroundColor: 'snow', direction: 'rtl'}}
-                                    label={Filed.label} 
+                                    sx={{ margin: '1.5%', backgroundColor: 'snow', direction: 'rtl' }}
+                                    label={Filed.label}
                                     id={Filed.id}
                                     color={Filed.id === 'LandingZoneLength' ? (checkDistance(Number(Filed.value)) ? 'success' : 'error') : 'success'}
                                     value={Filed.value}
                                     focused
-                                    
+
                                 />
                             })}
-                            <TextField 
+                            <TextField
                                 label="הערות"
                                 id="Comments"
-                                sx={{width: '94%', margin:'2%', backgroundColor: 'snow', direction: 'rtl'}}
+                                sx={{ width: '94%', margin: '2%', backgroundColor: 'snow', direction: 'rtl' }}
                                 variant="filled"
-                                
+
                             />
                         </Box>
                     </Box>
