@@ -1,5 +1,4 @@
 import { Position } from "geojson";
-import { EntityType } from "./EntityTypes";
 
 export type DialogPropsTypes = {
     DialogProps: LandingZoneProps | WptProps
@@ -18,7 +17,7 @@ export type Dialog = {
 
 interface baseDialogProps {
     id:number,
-    type: EntityType,
+    type: 'Point' | 'LineString',
     name: string,
     selfCoordinates:Position,
 }
@@ -33,3 +32,5 @@ export interface LandingZoneProps extends baseDialogProps {
 export interface WptProps extends baseDialogProps {
     PointElevation: number
 }
+
+

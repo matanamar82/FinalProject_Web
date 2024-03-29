@@ -34,7 +34,7 @@ function DialogComponent({ dialog }: { dialog: Dialog }) {
             onDrag={handleDrag}
             bounds={{ left: -window.innerWidth, right: window.innerWidth, top: -window.innerHeight, bottom: window.innerHeight }}
         >
-            {(dialog.properties.type == entityTypes.WPT ? 
+            {(dialog.properties.type == 'Point' ? 
                 <Box
                     className='WptCard'
                     borderRadius={5}
@@ -42,7 +42,7 @@ function DialogComponent({ dialog }: { dialog: Dialog }) {
                 >
                     <WptDialog dialog={dialog}/>
                 </Box>
-                : (dialog.properties.type == entityTypes.LANDING_ZONE) ?
+                : (dialog.properties.type == 'LineString') ?
                 <Box
                     className='LandingZoneCard'
                     borderRadius={5}

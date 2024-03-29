@@ -85,7 +85,9 @@ export const MapBox = ({ setIsConnect, barOption, showDialog }) =>
         doubleClickZoom={false}
       >
         <EntityLoader point={Point} showDialog={showDialog} />
-        {OpenMenu && EntitiesPositions.map((Entity) => <EntitiesMenu Entity={Entity} DecreaseMenuesCounter={DecreaseMenuesCounter}/>)}
+        {OpenMenu && EntitiesPositions.map(
+          (Entity, i) => <EntitiesMenu EntityPoint={Entity} DecreaseMenuesCounter={DecreaseMenuesCounter} Entity={FeaturesAroundPoint[i]}/>
+        )}
         <FetchSelfData
           isCenter={isCentered}
           center={(lat, lon, zoom, pitch, rot) =>

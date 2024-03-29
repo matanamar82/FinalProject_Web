@@ -1,15 +1,15 @@
 import { max, min } from "mathjs";
 import { Dialog, LandingZoneProps, WptProps } from "../types/DialogTypes";
 import { useDispatch } from "react-redux";
-import { entityTypes } from "../types/EntityTypes";
+import { AddDialog } from "../state/slices/DialogsSlice";
 
 
 const useCreateDialog = () => {
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     const CreateDialog = (dialog: LandingZoneProps | WptProps):Dialog => {
         console.log(typeof(dialog))
         let newDialog: Dialog;
-        if(dialog.type === entityTypes.LANDING_ZONE)
+        if(dialog.type === 'LineString')
         {
             const landingZoneProps = dialog as LandingZoneProps;
             newDialog = {
@@ -91,6 +91,14 @@ const useCreateDialog = () => {
         return newDialog
     }
 
+    function showDialog(dialog: any) 
+    {
+        dialog.then((res: any) => {
+            console.log(res)
+            const Dialog:Dialog = CreateDialog(res)
+            dispatch(AddDialog(Dialog))
+        })
+    };
     return {CreateDialog};
 }
 

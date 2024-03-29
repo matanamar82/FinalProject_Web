@@ -89,7 +89,7 @@ const EntityLoader = ({ point, showDialog }: any) => {
         const Result = await getLandingZoneElevations(Self_Coordinates, Dest_Coordinates)
         const dialog: LandingZoneProps = {
             id: id,
-            type: entityTypes.LANDING_ZONE,
+            type: 'LineString',
             name: name,
             elevationsArr: Result.avgArr,
             distancesArr: Result.distanceArr,
@@ -104,7 +104,7 @@ const EntityLoader = ({ point, showDialog }: any) => {
         const elevation = await getElevations([`${point.lat},${point.lng}`])
         const dialog: WptProps = {
             id: id,
-            type: entityTypes.WPT,
+            type: 'Point',
             name: name,
             PointElevation: elevation[0].elevation,
             selfCoordinates: [point.lng, point.lat]
