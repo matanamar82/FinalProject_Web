@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { stat } from "fs";
 import { Feature } from "geojson";
 
 interface EntityState {
@@ -14,9 +15,7 @@ const initialState: EntityState = {
     
 
 }
-// const printPoint = (point:any) => {
-//     console.log(point)
-// }
+
 const EntitySlice = createSlice({
     name: 'Entity',
     initialState,
@@ -28,9 +27,6 @@ const EntitySlice = createSlice({
         AddWpt: (state, action:PayloadAction<Feature>) => {
             state.Wpts.push(action.payload)
         },
-        // GetEntity: (state, action:PayloadAction<any>) => {
-        //     // printPoint(action.payload)
-        // }
     }
 })
 

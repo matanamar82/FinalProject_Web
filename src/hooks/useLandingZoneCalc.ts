@@ -1,12 +1,13 @@
 import { Position } from "geojson";
 import { computeDestinationPoint, getDistance, getRhumbLineBearing } from "geolib";
 import { number } from "mathjs";
+import getElevations from "../Component/GetElevations";
 
 // wing length = 25m
 
 export const useLandingZoneCalc = () => {
     
-    const getElevations = async(selfCoordinates:Position, destCoordinates:Position) => {
+    const getLandingZoneElevations = async(selfCoordinates:Position, destCoordinates:Position) => {
         const longDistance = getDistance(
             {latitude: selfCoordinates[1], longitude: selfCoordinates[0]}, 
             {latitude: destCoordinates[1], longitude: destCoordinates[0]})
@@ -15,11 +16,11 @@ export const useLandingZoneCalc = () => {
             {latitude: selfCoordinates[1], longitude: selfCoordinates[0]}, 
             {latitude: destCoordinates[1], longitude: destCoordinates[0]})
         
-        console.log(`the azimuth is: ${Azimuth} degrees`)
+        // console.log(`the azimuth is: ${Azimuth} degrees`)
 
 
         const distanceFromPoint = longDistance / 59 // 60 points
-        console.log(`the distnace between p1 to p2 is: ${longDistance}`)
+        // console.log(`the distnace between p1 to p2 is: ${longDistance}`)
 
         // center 
         const CenterPoints:string[] = getPointsInZone(selfCoordinates, destCoordinates, distanceFromPoint, Azimuth)
@@ -32,11 +33,13 @@ export const useLandingZoneCalc = () => {
         let {selfPoint: leftWingSelf, destPoint: leftWingDest} = getWingPoints(selfCoordinates, destCoordinates, Azimuth - 90);
         const LeftWingPoints:string[] = getPointsInZone(leftWingSelf, leftWingDest, distanceFromPoint, Azimuth);
         
-        const CenterElevation = await getElevationsArr(CenterPoints)
-        
-        const RightWingElevation = await getElevationsArr(RightWingPoints)
+        // const CenterElevation = await getElevationsArr(CenterPoints)
 
-        const LeftWingElevation = await getElevationsArr(LeftWingPoints)
+        const CenterElevation = await getElevations(CenterPoints)
+        
+        const RightWingElevation = await getElevations(RightWingPoints)
+
+        const LeftWingElevation = await getElevations(LeftWingPoints)
 
         const avgArr = getAvgArr(CenterElevation, LeftWingElevation, RightWingElevation)
 
@@ -47,7 +50,7 @@ export const useLandingZoneCalc = () => {
     } 
 
     const getDistanceArr = (distanceFromPoint:number):number[] => {
-        console.log(`the distnace between p1 to p2 is: ${distanceFromPoint}`)
+        // console.log(`the distnace between p1 to p2 is: ${distanceFromPoint}`)
 
         let distanceArr:number[] = []
         for(let i = 0; i<60; i++)
@@ -75,8 +78,8 @@ export const useLandingZoneCalc = () => {
     const getPointsInZone = (selfCoordinates:Position, destCoordinates:Position, distanceFromPoint:number, Azimuth:number): string[] => {
         
         // const Azimuth = (450 - ToDegrees * Math.atan((Dest_Coordinates[1] - Self_Coordinates[1]) / (Dest_Coordinates[0] - Self_Coordinates[0]))) % 360
-        console.log(`P1: ${selfCoordinates}\nP2: ${destCoordinates}`)
-        console.log(`the azimuth is: ${Azimuth} degrees`)
+        // console.log(`P1: ${selfCoordinates}\nP2: ${destCoordinates}`)
+        // console.log(`the azimuth is: ${Azimuth} degrees`)
         
         const PointsInZone:string[] = [];
         // *****************************************************************
@@ -98,27 +101,6 @@ export const useLandingZoneCalc = () => {
         return PointsInZone
     }
     
-    const getElevationsArr = async (Points:string[]) => {
-        let pointsToApiFormat = Points.join('');
-        console.log("the arr is:")
-        console.log(Points)
-        try {
-            const response = await fetch(`http://localhost:5000/api/${pointsToApiFormat}`);
-            const data = await response.json();
-            console.log(data)
-        
-            if (data.data && data.data.status === "OK") {
-              return data.data.results;
-            } else {
-              console.log("Error");
-              return null;
-            }
-          } catch (error) {
-            console.log(error);
-            return null;
-          }
-    }
-
     const getAvgArr = (CenterElevation:any[], RightWingElevation:any[], LeftWingElevation:any[]) => {
         let avgArr:number[] = []
         for(let i = 0; i<60; i++)
@@ -126,5 +108,5 @@ export const useLandingZoneCalc = () => {
         return avgArr 
     }
 
-    return {getElevations}
+    return {getLandingZoneElevations}
 }

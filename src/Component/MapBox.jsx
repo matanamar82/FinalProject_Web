@@ -49,7 +49,7 @@ export const MapBox = ({ setIsConnect, barOption, showDialog }) =>
     const Features = getFeaturesAroundPoint(mapRef, point);
     if(Features.length != 0)
     {
-      // console.log(Features);
+      console.log(Features);
       setFeaturesAroundPoint(Features);
       setOpenMenu(true)
       const Positions = []

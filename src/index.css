@@ -14,15 +14,22 @@ code {
     monospace;
 }
 
-.Card{
-  width: 50vw;
+.WptCard{
+  width: 25vw;
+  height: 35vh;
+  cursor: move;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.LandingZoneCard{
+  width: 45vw;
   height: 55vh;
   cursor: move;
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
 .TextField{
-  width: 11.5vw;
+  width: 9vw;
 }
 
 .closeBtn{

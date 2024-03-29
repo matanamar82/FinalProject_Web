@@ -1,41 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { Bar } from './Component/Bar';
 import { MapBox } from './Component/MapBox';
-import LandingZoneDialog from "./Component/EntitiesWindows/LandingZoneDialog";
 import { Position } from 'geojson';
-import { LandingZoneDialogPropsType } from './types/LandingZoneDialogTypes';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './state/stores/Store';
 import EntitiesMenu from './Component/EntitiesWindows/EntitiesMenu';
-import { AddDialog } from './state/slices/DialogsSlice';
+import { AddDialog, OpenDialog } from './state/slices/DialogsSlice';
 import useCreateDialog from './hooks/useCreateDialog';
+import { Dialog, LandingZoneProps } from './types/DialogTypes';
+import { entityTypes } from './types/EntityTypes';
+import DialogComponent from './Component/EntitiesWindows/DialogComponent';
 
 function App() {
   const Option = useSelector((state: RootState) => state.pinMode.option);
   const Dialogs = useSelector((state: RootState) => state.dialogs.Dialogs);
-
+  const openDialog = useSelector((state: RootState) => state.dialogs.isOpen);
   const [IsConnect, setIsConnect] = useState<boolean>(false);
-  const [DialogsArr, setDialogsArr] = useState<LandingZoneDialogPropsType[]>([]) // מערך של כל המנחתים שבחרנו
-  const [openDialog, SetOpen] = useState<boolean>(false);
+  const [Dialog, setDialog] = useState<Dialog>() // מערך של כל המנחתים שבחרנו
   const {CreateDialog} = useCreateDialog();
   const dispatch = useDispatch();
 
-  function showDialog(dialogData: any, selfCoordinates: Position, destCoordinates: Position) {
-    dialogData.then((res: any) => {
-      console.log(`dialog data is:`)
+  function showDialog(dialog: any) {
+    dialog.then((res: any) => {
       console.log(res)
-      const dialog: LandingZoneDialogPropsType = {
-        elevationsArr: res.avgArr,
-        distancesArr: res.distanceArr,
-        distance: res.longDistance,
-        selfCoordinates: selfCoordinates,
-        destCoordinates: destCoordinates
-      };
-      CreateDialog(dialog)
+      const Dialog:Dialog = CreateDialog(res)
       // dispatch(AddDialog({Dialog: dialog}))
-      setDialogsArr([...DialogsArr, dialog])
-      SetOpen(true);
+      setDialog(Dialog)
+      dispatch(OpenDialog());
     })
   };
 
@@ -47,8 +39,7 @@ function App() {
         barOption={Option}
         showDialog={showDialog}
       />
-      {openDialog && <LandingZoneDialog dialog={DialogsArr[DialogsArr.length - 1]} SetOpen={SetOpen} />}
-      {/* <EntitiesMenu /> */}
+      {openDialog && Dialog && <DialogComponent dialog={Dialog} />}
     </div>
   );
 }

@@ -15,25 +15,25 @@ const getEntity = (entityType:string, mission?: Feature<Geometry, GeoJsonPropert
         case entityTypes.LANDING_ZONE:
             return [
                 {
-                    source: mission,
                     id: entityTypes.LANDING_ZONE,
-                    layers: landingZoneLayer
+                    layers: landingZoneLayer,
+                    source: mission
                 }
             ];
         case entityTypes.WPT:
             return [
                 {
-                    source: mission,
                     id: entityTypes.WPT,
-                    layers: WptPointsLayer
+                    layers: WptPointsLayer,
+                    source: mission
                 }
             ];
         default:
             return [
                 {
-                    source: mission,
                     id: entityTypes.WPT,
-                    layers: WptPointsLayer
+                    layers: WptPointsLayer,
+                    source: mission
                 }
             ]
     }

@@ -1,19 +1,15 @@
-import { Box, IconButton, TextField } from "@mui/material"
-import { LineChart } from "@mui/x-charts"
-import ClearIcon from '@mui/icons-material/Clear';
 import { useDispatch } from "react-redux";
+import { Dialog, WptProps } from "../../types/DialogTypes"
+import { Box, IconButton, TextField } from "@mui/material";
 import { CloseDialog } from "../../state/slices/DialogsSlice";
-import { Dialog, LandingZoneProps } from "../../types/DialogTypes";
+import ClearIcon from '@mui/icons-material/Clear';
 
-function checkDistance(distance: number): boolean {
-    return (distance >= 1000 && distance <= 3000)
-}
 
-const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
+const WptDialog = ({ dialog }: { dialog: Dialog }) => {
     const dispatch = useDispatch();
-    const properties = dialog.properties as LandingZoneProps;
-    const TextFields = dialog.dialog;
-    return(
+    const properties = dialog.properties as WptProps;
+    const TextFields = dialog.dialog;    
+    return (
         <>
             <Box className='closeBtn' sx={{ height: '15%', marginRight: '3%' }}>
                 <IconButton onClick={() => dispatch(CloseDialog())}><ClearIcon /></IconButton>
@@ -22,22 +18,6 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
                 display={'flex'}
                 height={'85%'}
             >
-                <Box>
-                    
-                    <LineChart
-                        // ציר x = המרחקים
-                        xAxis={[{ data: properties.distancesArr }]}
-                        series={[
-                            {
-                                // ציר y = הגבהים
-                                data: properties.elevationsArr,
-                                area: true,
-                            },
-                        ]}
-                        width={370}
-                        height={300}
-                    />
-                </Box>
                 <Box>
                     <Box
                         sx={{
@@ -56,7 +36,7 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
                                 sx={{ margin: '1.5%', backgroundColor: 'snow', direction: 'rtl' }}
                                 label={Field.label}
                                 id={Field.id}
-                                color={Field.id === 'LandingZoneLength' ? (checkDistance(Number(Field.value)) ? 'success' : 'error') : 'success'}
+                                color={'success'}
                                 value={Field.value}
                                 // onChange={(e) => handleFieldChange(e, Field.id)}
                                 focused
@@ -77,4 +57,4 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
     )
 }
 
-export default LandingZoneDialog
+export default WptDialog

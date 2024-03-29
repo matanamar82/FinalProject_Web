@@ -1,17 +1,18 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { LandingZoneDialogPropsType } from '../../types/LandingZoneDialogTypes';
-import { WptDialogPropsType } from '../../types/WptDialogPropsType';
+import { TextFieldsTypes } from '../../types/DialogTypes';
 
 interface DialogType {
-    Dialog: LandingZoneDialogPropsType | WptDialogPropsType
+    Dialog: TextFieldsTypes[]
 }
 interface DialogsState {
-    Dialogs: DialogType[]
+    Dialogs: DialogType[],
+    isOpen: boolean
 
 }
 
 const initialState:DialogsState = {
-    Dialogs: []
+    Dialogs: [],
+    isOpen: false
 }
 
 const DialogsSlice = createSlice({
@@ -21,10 +22,16 @@ const DialogsSlice = createSlice({
     reducers: {
         AddDialog: (state, action: PayloadAction<DialogType>) => {
             state.Dialogs.push(action.payload)
+        },
+        OpenDialog: (state) => {
+            state.isOpen = true
+        },
+        CloseDialog: (state) => {
+            state.isOpen = false
         }
     }
 })
 
-export const {AddDialog} = DialogsSlice.actions;
+export const {AddDialog, OpenDialog, CloseDialog} = DialogsSlice.actions;
 
 export default DialogsSlice.reducer

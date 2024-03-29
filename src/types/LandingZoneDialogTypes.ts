@@ -8,6 +8,7 @@ export type LandingZoneTextFieldsTypes =
 };
 
 export type LandingZoneDialogPropsType = {
+    id: string,
     elevationsArr: number[],
     distancesArr: number[],
     distance: number,

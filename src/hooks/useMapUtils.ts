@@ -1,8 +1,11 @@
 import { MapboxGeoJSONFeature, PointLike } from "mapbox-gl";
 import { MapRef } from "react-map-gl"
 import { sources } from "../MapSource";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../state/stores/Store";
 
 export const useMapUtils = () => {
+    const lzones = useSelector((state: RootState) => state.Entity.LandingZones);
     const getFeaturesAroundPoint = (map: MapRef, point: mapboxgl.Point): MapboxGeoJSONFeature[] => {
         console.log(map);
 
@@ -17,7 +20,7 @@ export const useMapUtils = () => {
             layers: sources().map(src => src.layers.id)
         });
 
-        // console.log(features)
+        console.log(features[0])
         // const uniqueFeatures: MapboxGeoJSONFeature[] = features.filter(
         //     (value: MapboxGeoJSONFeature, index: number, array: MapboxGeoJSONFeature[]) => 
         //         array.findIndex((item: MapboxGeoJSONFeature) => item.id === value.id) === index
