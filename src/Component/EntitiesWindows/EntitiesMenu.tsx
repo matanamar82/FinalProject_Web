@@ -77,13 +77,18 @@ export default function EntitiesMenu({EntityPoint, DecreaseMenuesCounter, Entity
         </ListItemIcon>
         הרחבת נתונים - דיאלוג
       </MenuItem>
+      {(Entity.geometry.type == 'Point') ? 
+        <MenuItem>
+          <ListItemIcon>
+            <StraightIcon fontSize="small" />
+          </ListItemIcon>
+          Direct
+        </MenuItem>
+        :
+        <>
+        </>
+      }
       
-      <MenuItem>
-        <ListItemIcon>
-          <StraightIcon fontSize="small" />
-        </ListItemIcon>
-        Direct
-      </MenuItem>
     </Menu>
   );
 }
