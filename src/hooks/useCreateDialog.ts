@@ -12,6 +12,10 @@ const useCreateDialog = () => {
         if(dialog.type === 'LineString')
         {
             const landingZoneProps = dialog as LandingZoneProps;
+            let elevation = min(...landingZoneProps.elevationsArr)
+            let minElevation = elevation < 0 ? `${Math.abs(elevation)}-` : elevation;
+            elevation = max(...landingZoneProps.elevationsArr);
+            let maxElevation = elevation < 0 ? `${Math.abs(elevation)}-` : elevation;
             newDialog = {
                 id: landingZoneProps.id,
                 properties: landingZoneProps,
@@ -28,12 +32,12 @@ const useCreateDialog = () => {
                 {
                     label: "גובה מינימלי",
                     id: "MinHeight",
-                    value: min(...landingZoneProps.elevationsArr)
+                    value: minElevation
                 },
                 {
                     label: "גובה מקסימלי",
                     id: "MaxHeight",
-                    value: max(...landingZoneProps.elevationsArr),
+                    value: maxElevation,
                 },
                 {
                     label: "נקודת התחלה - lat",
@@ -66,14 +70,14 @@ const useCreateDialog = () => {
                 properties: WptProps,
                 dialog: [
                     {
-                        label: "שם הנקודה",
-                        id: "WptName",
-                        value: WptProps.name
-                    },
-                    {
                         label: "גובה הנקודה",
                         id: "Height",
                         value: WptProps.PointElevation
+                    },
+                    {
+                        label: "שם הנקודה",
+                        id: "WptName",
+                        value: WptProps.name
                     },
                     {
                         label: "הנקודה - lat",

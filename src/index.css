@@ -32,6 +32,13 @@ code {
   width: 9vw;
 }
 
+.ElevationsFields{
+  direction: ltr;
+}
+.OtherFields{
+  direction: rtl;
+}
+
 .closeBtn{
   justify-content: end;
   display: flex;

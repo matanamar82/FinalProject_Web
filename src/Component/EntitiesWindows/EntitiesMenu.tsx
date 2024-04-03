@@ -19,7 +19,6 @@ export default function EntitiesMenu({EntityPoint, DecreaseMenuesCounter, Entity
   const handleClose = () => {
     setOpen(false);
     DecreaseMenuesCounter()
-    // setOpenMenu(false)
   };
 
   const handleDialog = () => {

@@ -22,7 +22,9 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
                 display={'flex'}
                 height={'85%'}
             >
-                <Box>
+                <Box 
+                    marginLeft={'4%'}
+                >
                     
                     <LineChart
                         // ציר x = המרחקים
@@ -34,8 +36,8 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
                                 area: true,
                             },
                         ]}
-                        width={370}
-                        height={300}
+                        width={410}
+                        height={330}
                     />
                 </Box>
                 <Box>
@@ -51,6 +53,7 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
                             // console.log(Filed)
                             return <TextField
                                 key={i}
+                                // className={Field.id === 'MinHeight' || Field.id === 'MaxHeight' ? 'TextField ElevationsFields' : 'TextField OtherFields'}
                                 className="TextField"
                                 variant="filled"
                                 sx={{ margin: '1.5%', backgroundColor: 'snow', direction: 'rtl' }}
