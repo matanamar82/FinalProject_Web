@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../state/stores/Store";
 
 export const useMapUtils = () => {
-    const lzones = useSelector((state: RootState) => state.Entity.LandingZones);
+    const lzones = useSelector((state: RootState) => state.Entity.FlightLegs);
     const getFeaturesAroundPoint = (map: MapRef, point: mapboxgl.Point): MapboxGeoJSONFeature[] => {
         console.log(map);
 

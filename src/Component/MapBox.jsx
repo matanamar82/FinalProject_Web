@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { useMapUtils } from "../hooks/useMapUtils";
 import EntitiesMenu from "./EntitiesWindows/EntitiesMenu";
 
-export const MapBox = ({ setIsConnect, barOption, showDialog }) => 
+export const MapBox = ({ setIsConnect, barOption }) => 
 {
   const [viewState, setViewState] = useState({
     longitude: 35,
@@ -84,7 +84,7 @@ export const MapBox = ({ setIsConnect, barOption, showDialog }) =>
         onDblClick={(evt) => EntitiesMenuHandle(mapRef.current, evt.point)}
         doubleClickZoom={false}
       >
-        <EntityLoader point={Point} showDialog={showDialog} />
+        <EntityLoader point={Point} />
         {OpenMenu && EntitiesPositions.map(
           (Entity, i) => <EntitiesMenu EntityPoint={Entity} DecreaseMenuesCounter={DecreaseMenuesCounter} Entity={FeaturesAroundPoint[i]}/>
         )}

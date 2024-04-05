@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
-import store from './state/store';
+import './styles/Dialogs.css';
 import { Store } from './state/stores/Store';
 
 const container = document.getElementById('root')!;

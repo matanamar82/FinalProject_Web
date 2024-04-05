@@ -1,11 +1,11 @@
 
 export const PinModeOptions : Record<string, Function>  = {
-    LandingZone : landingPinMode ,
+    FlightLeg : FlightLegPinMode ,
     wptPinMode : ()=>{}, 
     wptLandingLocation :()=>{}
 }
 
-function landingPinMode()
+function FlightLegPinMode()
 {
     //pin 2 locations
 }

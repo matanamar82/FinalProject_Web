@@ -1,7 +1,7 @@
 import { Position } from "geojson";
 
 export type DialogPropsTypes = {
-    DialogProps: LandingZoneProps | WptProps
+    DialogProps: FlightLegProps | WptProps
 };
 export type TextFieldsTypes = 
 {
@@ -11,7 +11,7 @@ export type TextFieldsTypes =
 };
 export type Dialog = {
     id: number,
-    properties: LandingZoneProps | WptProps
+    properties: FlightLegProps | WptProps
     dialog: TextFieldsTypes[]
 }
 
@@ -22,11 +22,13 @@ interface baseDialogProps {
     selfCoordinates:Position,
 }
 
-export interface LandingZoneProps extends baseDialogProps {
+export interface FlightLegProps extends baseDialogProps {
     elevationsArr: number[],
     distancesArr: number[],
     distance: number,
-    destCoordinates:Position
+    destCoordinates:Position,
+    maxElevation: number | string,
+    minElevation: number | string
 }
 
 export interface WptProps extends baseDialogProps {

@@ -3,9 +3,9 @@ import { Entity, EntityType, entityTypes } from "./types/EntityTypes";
 
 export const defaultEntity = (coordinate: GeoCoordinate): { [key in EntityType]: Entity } => {
     return {
-        landingZone: {
+        FlightLeg: {
             name: 'LZ_001',
-            entityType: entityTypes.LANDING_ZONE,
+            entityType: entityTypes.FlightLeg,
             position: coordinate,
             endPosition: coordinate,
             centerPosition: coordinate,

@@ -19,8 +19,8 @@ const pinModeSlice = createSlice({
 
     // actions
     reducers: {
-        LandingZone: (state) => {
-            state.option = 'LandingZone'
+        FlightLeg: (state) => {
+            state.option = 'FlightLeg'
             state.numberOfClicks = 2
             state.points = []
         },
@@ -42,7 +42,7 @@ const pinModeSlice = createSlice({
     }
 })
 
-export const { LandingZone, Wpt, Init, DecreaseClicks } = pinModeSlice.actions;
+export const { FlightLeg, Wpt, Init, DecreaseClicks } = pinModeSlice.actions;
 
 export default pinModeSlice.reducer;
 

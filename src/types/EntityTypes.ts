@@ -2,7 +2,7 @@ import { GeoCoordinate } from "../Component/GeoCoordinate";
 
 export const entityTypes = {
     WPT: 'wpt',
-    LANDING_ZONE: 'landingZone'
+    FlightLeg: 'FlightLeg'
 
 } as const;
 
@@ -19,7 +19,7 @@ export interface Wpt extends BaseEntity {
     altitude: number;
 };
 
-export interface LandingZone extends BaseEntity {
+export interface FlightLeg extends BaseEntity {
     endPosition: GeoCoordinate,
     centerPosition: GeoCoordinate,
     // type: string,
@@ -28,7 +28,7 @@ export interface LandingZone extends BaseEntity {
 
 export type Entity =
     | Wpt
-    | LandingZone;
+    | FlightLeg;
 
 
 export type EntityType = (typeof entityTypes)[keyof typeof entityTypes]

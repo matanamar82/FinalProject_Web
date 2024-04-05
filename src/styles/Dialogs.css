@@ -1,0 +1,28 @@
+.WptCard{
+    width: 25vw;
+    height: 30vh;
+    cursor: move;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+  
+.FlightLegCard{
+width: 45vw;
+height: 45vh;
+cursor: move;
+box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.TextField{
+width: 9vw;
+}
+
+.closeBtn{
+justify-content: end;
+display: flex;
+}
+.content{
+height: 80%;
+}
+.Border{
+border: 1% solid black;
+}

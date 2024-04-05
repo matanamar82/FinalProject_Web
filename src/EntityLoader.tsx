@@ -1,24 +1,28 @@
 import { FeatureCollection, Position } from "geojson";
 import { useEffect } from "react";
 import { Layer, Source, useMap } from "react-map-gl";
-import { useLandingZoneCalc } from "./hooks/useLandingZoneCalc";
+import { useFlightLegCalc } from "./hooks/useFlightLegCalc";
 import { useDispatch } from "react-redux";
 import { Init, DecreaseClicks } from "./state/slices/PinModeSlice";
-import { AddLandingZone, AddWpt } from "./state/slices/EntitySlice";
+import { AddFlightLeg, AddWpt } from "./state/slices/EntitySlice";
 import usePinModeSlice from "./hooks/usePinModeSlice";
 import useEnities from "./hooks/useEntities";
-import { landingZoneLayer } from "./layers/LandingZoneLayer";
+import { FlightLegLayer } from "./layers/FlightLegLayer";
 import { WptPointsLayer } from "./layers/WptLayer";
-import { landingZonePointsLayer } from "./layers/LandingZonePointsLayer";
+import { FlightLegPointsLayer } from "./layers/FlightLegPointsLayer";
 import { entityTypes } from "./types/EntityTypes";
 import getElevations from "./Component/GetElevations";
-import { LandingZoneProps, WptProps } from "./types/DialogTypes";
+import { FlightLegProps, WptProps } from "./types/DialogTypes";
+import useCreateDialog from "./hooks/useCreateDialog";
+import { max, min } from "mathjs";
 
-const EntityLoader = ({ point, showDialog }: any) => {
-    const { getLandingZoneElevations } = useLandingZoneCalc();
+const EntityLoader = ({ point }: any) => {
+    const { getFlightLegElevations } = useFlightLegCalc();
     const dispatch = useDispatch();
     const { Option, ClicksAmount, points } = usePinModeSlice();
-    const { Wpts, LandingZones } = useEnities();
+    const { Wpts, FlightLegs } = useEnities();
+    const {showDialog} = useCreateDialog();
+
 
     useEffect(() => {
         if (point && ClicksAmount !== 0) {
@@ -42,8 +46,8 @@ const EntityLoader = ({ point, showDialog }: any) => {
                     showDialog(result)
                     // console.log(result)
                 }
-                else if (ClicksAmount > 0 && Option === 'LandingZone') {
-                    console.log(LandingZones.length)
+                else if (ClicksAmount > 0 && Option === 'FlightLeg') {
+                    console.log(FlightLegs.length)
                     dispatch(DecreaseClicks({
                         option: Option,
                         numberOfClicks: ClicksAmount,
@@ -64,10 +68,10 @@ const EntityLoader = ({ point, showDialog }: any) => {
             {
                 const Self_Coordinates = SelfPosition.geometry.coordinates
                 const Dest_Coordinates = DestinationPosition.geometry.coordinates
-                const id:number = LandingZones.length
+                const id:number = FlightLegs.length
 
                 if (Self_Coordinates !== Dest_Coordinates) {
-                    dispatch(AddLandingZone({ 
+                    dispatch(AddFlightLeg({ 
                         type: 'Feature', 
                         geometry: { 
                             type: 'LineString', 
@@ -77,17 +81,17 @@ const EntityLoader = ({ point, showDialog }: any) => {
                         id: id
                     }))
                 }
-                const name:string = `${entityTypes.LANDING_ZONE}-${LandingZones.length}`
-                const result = CreateLandingZoneDialog(Self_Coordinates, Dest_Coordinates, name, id)
+                const name:string = `FlightLeg-${FlightLegs.length}`
+                const result = CreateFlightLegDialog(Self_Coordinates, Dest_Coordinates, name, id)
                 showDialog(result)
             }
             dispatch(Init())
         }
-    }, [points]) // מוסיף קו המחבר בין 2 הנקודות, אשר מסמנות את מסלול הנחיתה 
+    }, [points]) // מוסיף קו המחבר בין 2 הנקודות, אשר מסמנות את חתך הטיסה 
 
-    const CreateLandingZoneDialog = async(Self_Coordinates:Position, Dest_Coordinates:Position, name:string, id:number) => {
-        const Result = await getLandingZoneElevations(Self_Coordinates, Dest_Coordinates)
-        const dialog: LandingZoneProps = {
+    const CreateFlightLegDialog = async(Self_Coordinates:Position, Dest_Coordinates:Position, name:string, id:number) => {
+        const Result = await getFlightLegElevations(Self_Coordinates, Dest_Coordinates)
+        const dialog: FlightLegProps = {
             id: id,
             type: 'LineString',
             name: name,
@@ -95,7 +99,9 @@ const EntityLoader = ({ point, showDialog }: any) => {
             distancesArr: Result.distanceArr,
             distance: Result.longDistance,
             selfCoordinates: Self_Coordinates,
-            destCoordinates: Dest_Coordinates
+            destCoordinates: Dest_Coordinates,
+            maxElevation: max(...Result.avgArr),
+            minElevation: min(...Result.avgArr)
         }
         return dialog;
     }
@@ -112,7 +118,7 @@ const EntityLoader = ({ point, showDialog }: any) => {
         return dialog; 
     }
 
-    const geojsonLZ: FeatureCollection = {
+    const geojsonFL: FeatureCollection = {
         type: 'FeatureCollection',
         features: points
     };
@@ -121,9 +127,9 @@ const EntityLoader = ({ point, showDialog }: any) => {
         features: Wpts
     };
 
-    const LandingZoneLine: FeatureCollection = {
+    const FlightLegLine: FeatureCollection = {
         type: 'FeatureCollection',
-        features: LandingZones
+        features: FlightLegs
     }
 
 
@@ -132,11 +138,11 @@ const EntityLoader = ({ point, showDialog }: any) => {
             <Source id="WptPoints" type="geojson" data={geojsonWpt}>
                 <Layer {...WptPointsLayer} />
             </Source>
-            <Source id="landingZonePoints" type="geojson" data={geojsonLZ}>
-                <Layer {...landingZonePointsLayer} />
+            <Source id="FlightLegPoints" type="geojson" data={geojsonFL}>
+                <Layer {...FlightLegPointsLayer} />
             </Source>
-            <Source id="landingZoneLine" type="geojson" data={LandingZoneLine}>
-                <Layer {...landingZoneLayer} />
+            <Source id="FlightLegLine" type="geojson" data={FlightLegLine}>
+                <Layer {...FlightLegLayer} />
             </Source>
         </>
     )

@@ -3,15 +3,15 @@ import { LineChart } from "@mui/x-charts"
 import ClearIcon from '@mui/icons-material/Clear';
 import { useDispatch } from "react-redux";
 import { CloseDialog } from "../../state/slices/DialogsSlice";
-import { Dialog, LandingZoneProps } from "../../types/DialogTypes";
+import { Dialog, FlightLegProps } from "../../types/DialogTypes";
 
 function checkDistance(distance: number): boolean {
     return (distance >= 1000 && distance <= 3000)
 }
 
-const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
+const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
     const dispatch = useDispatch();
-    const properties = dialog.properties as LandingZoneProps;
+    const properties = dialog.properties as FlightLegProps;
     const TextFields = dialog.dialog;
     return(
         <>
@@ -25,7 +25,6 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
                 <Box 
                     marginLeft={'4%'}
                 >
-                    
                     <LineChart
                         // ציר x = המרחקים
                         xAxis={[{ data: properties.distancesArr }]}
@@ -34,7 +33,13 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
                                 // ציר y = הגבהים
                                 data: properties.elevationsArr,
                                 area: true,
+                                showMark: false,                                
                             },
+                            {
+                                data: properties.elevationsArr.map(elevation => 
+                                    (elevation === properties.maxElevation || elevation === properties.minElevation) ? elevation : null),
+                                color: 'orange'
+                            }
                         ]}
                         width={410}
                         height={330}
@@ -53,13 +58,12 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
                             // console.log(Filed)
                             return <TextField
                                 key={i}
-                                // className={Field.id === 'MinHeight' || Field.id === 'MaxHeight' ? 'TextField ElevationsFields' : 'TextField OtherFields'}
                                 className="TextField"
                                 variant="filled"
                                 sx={{ margin: '1.5%', backgroundColor: 'snow', direction: 'rtl' }}
                                 label={Field.label}
                                 id={Field.id}
-                                color={Field.id === 'LandingZoneLength' ? (checkDistance(Number(Field.value)) ? 'success' : 'error') : 'success'}
+                                color={Field.id === 'FlightLegLength' ? (checkDistance(Number(Field.value)) ? 'success' : 'error') : 'success'}
                                 value={Field.value}
                                 // onChange={(e) => handleFieldChange(e, Field.id)}
                                 focused
@@ -80,4 +84,4 @@ const LandingZoneDialog = ({ dialog } : { dialog: Dialog }) => {
     )
 }
 
-export default LandingZoneDialog
+export default FlightLegDialog

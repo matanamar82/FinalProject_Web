@@ -3,9 +3,9 @@ import { RootState } from "../state/stores/Store";
 
 const useEnities = () => {
     const Wpts = useSelector((state: RootState) => state.Entity.Wpts);
-    const LandingZones = useSelector((state: RootState) => state.Entity.LandingZones);
+    const FlightLegs = useSelector((state: RootState) => state.Entity.FlightLegs);
     
-    return {Wpts, LandingZones}
+    return {Wpts, FlightLegs}
 }
 
 export default useEnities;

@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 import { useDispatch } from 'react-redux';
-import { LandingZone, Wpt } from '../state/slices/PinModeSlice';
+import { FlightLeg, Wpt } from '../state/slices/PinModeSlice';
 
 export const Bar = () => {
   const dispatch = useDispatch();
@@ -62,8 +62,8 @@ export const Bar = () => {
           </Collapse>
           <Divider />
           <ListItem sx={{ justifyContent: 'center' }}>
-            <Tooltip title="בחר מסלול נחיתה" placement='left'>
-              <IconButton onClick={() => dispatch(LandingZone())}>
+            <Tooltip title="בחר חתך טיסה" placement='left'>
+              <IconButton onClick={() => dispatch(FlightLeg())}>
                 <FlightLandIcon sx={{ fontSize: '40px' }} />
               </IconButton>
             </Tooltip>

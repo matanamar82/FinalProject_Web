@@ -5,9 +5,9 @@ import getElevations from "../Component/GetElevations";
 
 // wing length = 25m
 
-export const useLandingZoneCalc = () => {
+export const useFlightLegCalc = () => {
     
-    const getLandingZoneElevations = async(selfCoordinates:Position, destCoordinates:Position) => {
+    const getFlightLegElevations = async(selfCoordinates:Position, destCoordinates:Position) => {
         const longDistance = getDistance(
             {latitude: selfCoordinates[1], longitude: selfCoordinates[0]}, 
             {latitude: destCoordinates[1], longitude: destCoordinates[0]})
@@ -108,5 +108,5 @@ export const useLandingZoneCalc = () => {
         return avgArr 
     }
 
-    return {getLandingZoneElevations}
+    return {getFlightLegElevations}
 }

@@ -1,15 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { stat } from "fs";
 import { Feature } from "geojson";
 
 interface EntityState {
-    LandingZones: Feature[];
+    FlightLegs: Feature[];
     Wpts: Feature[];
     ClickedEntity: Feature | null;
 }
 
 const initialState: EntityState = {
-    LandingZones: [],
+    FlightLegs: [],
     Wpts: [],
     ClickedEntity: null,
     
@@ -21,8 +20,8 @@ const EntitySlice = createSlice({
     initialState,
     
     reducers: {
-        AddLandingZone: (state, action:PayloadAction<Feature>) => {
-            state.LandingZones.push(action.payload)
+        AddFlightLeg: (state, action:PayloadAction<Feature>) => {
+            state.FlightLegs.push(action.payload)
         },
         AddWpt: (state, action:PayloadAction<Feature>) => {
             state.Wpts.push(action.payload)
@@ -30,6 +29,6 @@ const EntitySlice = createSlice({
     }
 })
 
-export const { AddLandingZone, AddWpt } = EntitySlice.actions;
+export const { AddFlightLeg, AddWpt } = EntitySlice.actions;
 
 export default EntitySlice.reducer;

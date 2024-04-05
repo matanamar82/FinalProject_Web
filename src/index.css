@@ -14,46 +14,4 @@ code {
     monospace;
 }
 
-.WptCard{
-  width: 25vw;
-  height: 35vh;
-  cursor: move;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-}
 
-.LandingZoneCard{
-  width: 45vw;
-  height: 55vh;
-  cursor: move;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-}
-
-.TextField{
-  width: 9vw;
-}
-
-.ElevationsFields{
-  direction: ltr;
-}
-.OtherFields{
-  direction: rtl;
-}
-
-.closeBtn{
-  justify-content: end;
-  display: flex;
-}
-.content{
-  height: 80%;
-}
-.Border{
-  border: 1% solid black;
-}
-
-.rtl-input {
-  direction: rtl;
-}
-
-.rtl-label {
-  direction: rtl;
-}

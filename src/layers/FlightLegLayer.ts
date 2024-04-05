@@ -1,7 +1,7 @@
 import { LineLayer } from "mapbox-gl";
 
-export const landingZoneLayer: LineLayer = {
-    id: 'landingzone-layer',
+export const FlightLegLayer: LineLayer = {
+    id: 'FlightLeg-layer',
     type: 'line',
     layout:  {
         'line-cap': 'round',
@@ -15,6 +15,6 @@ export const landingZoneLayer: LineLayer = {
     // filter: [
     //     'all',
     //     ['==', ['geometry-type'], 'LineString'],
-    //     ['==', ['get', 'entityType'],'landingZone']
+    //     ['==', ['get', 'entityType'],'FlightLeg']
     // ]
 }

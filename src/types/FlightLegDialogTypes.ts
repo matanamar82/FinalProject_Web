@@ -1,13 +1,13 @@
 import { Position } from "geojson";
 
-export type LandingZoneTextFieldsTypes = 
+export type FlightLegTextFieldsTypes = 
 {
     label:string,
     id:string,
     value: string | number
 };
 
-export type LandingZoneDialogPropsType = {
+export type FlightLegDialogPropsType = {
     id: string,
     elevationsArr: number[],
     distancesArr: number[],

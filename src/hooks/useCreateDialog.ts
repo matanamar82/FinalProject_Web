@@ -1,33 +1,33 @@
 import { max, min } from "mathjs";
-import { Dialog, LandingZoneProps, WptProps } from "../types/DialogTypes";
+import { Dialog, FlightLegProps, WptProps } from "../types/DialogTypes";
 import { useDispatch } from "react-redux";
 import { AddDialog } from "../state/slices/DialogsSlice";
 
 
 const useCreateDialog = () => {
     const dispatch = useDispatch();
-    const CreateDialog = (dialog: LandingZoneProps | WptProps):Dialog => {
+    const CreateDialog = (dialog: FlightLegProps | WptProps):Dialog => {
         console.log(typeof(dialog))
         let newDialog: Dialog;
         if(dialog.type === 'LineString')
         {
-            const landingZoneProps = dialog as LandingZoneProps;
-            let elevation = min(...landingZoneProps.elevationsArr)
+            const FlightLegProps = dialog as FlightLegProps;
+            let elevation = min(...FlightLegProps.elevationsArr)
             let minElevation = elevation < 0 ? `${Math.abs(elevation)}-` : elevation;
-            elevation = max(...landingZoneProps.elevationsArr);
+            elevation = max(...FlightLegProps.elevationsArr);
             let maxElevation = elevation < 0 ? `${Math.abs(elevation)}-` : elevation;
             newDialog = {
-                id: landingZoneProps.id,
-                properties: landingZoneProps,
+                id: FlightLegProps.id,
+                properties: FlightLegProps,
                 dialog: [{
                     label: "אורך המנחת",
-                    id: "LandingZoneLength",
-                    value: landingZoneProps.distance
+                    id: "FlightLegLength",
+                    value: FlightLegProps.distance
                 },
                 {
                     label: "שם המנחת",
-                    id: "LandingZoneName",
-                    value: landingZoneProps.name
+                    id: "FlightLegName",
+                    value: FlightLegProps.name
                 },
                 {
                     label: "גובה מינימלי",
@@ -42,22 +42,22 @@ const useCreateDialog = () => {
                 {
                     label: "נקודת התחלה - lat",
                     id: "startPointLat",
-                    value: landingZoneProps.selfCoordinates[1].toFixed(5)
+                    value: FlightLegProps.selfCoordinates[1].toFixed(5)
                 },
                 {
                     label: "נקודת התחלה - lng",
                     id: "startPointLng",
-                    value: landingZoneProps.selfCoordinates[0].toFixed(5)
+                    value: FlightLegProps.selfCoordinates[0].toFixed(5)
                 },
                 {
                     label: "נקודת סיום - lat",
                     id: "endPointLat",
-                    value: landingZoneProps.destCoordinates[1].toFixed(5)
+                    value: FlightLegProps.destCoordinates[1].toFixed(5)
                 },
                 {
                     label: "נקודת סיום - lng",
                     id: "endPointLng",
-                    value: landingZoneProps.destCoordinates[0].toFixed(5)
+                    value: FlightLegProps.destCoordinates[0].toFixed(5)
                 }]
             }
             
@@ -103,7 +103,7 @@ const useCreateDialog = () => {
             dispatch(AddDialog(Dialog))
         })
     };
-    return {CreateDialog};
+    return {showDialog};
 }
 
 export default useCreateDialog

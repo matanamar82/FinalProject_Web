@@ -7,7 +7,7 @@ import { computeDestinationPoint, getDistance, getRhumbLineBearing } from "geoli
 
 export const noodle = () => {
     const AmountOfPoints: number = 30;
-    const Period: number = 2;
+    let Period: number = 2;
     const ToDegrees: number = 180 / Math.PI;
     const ToRadian: number = Math.PI / 180;
     const gravity: number = 9.81;
@@ -36,7 +36,7 @@ export const noodle = () => {
     function CalculateNoodle():void{
         let rateOfTurn:number = GetRateOfTurn();
         let turnRadios:number = GetTurnRadios(rateOfTurn);
-        let Thetta : number = ToRadian * ((selfData.TrueHeading) - (selfData.WindAzimuth + 180));
+        let Thetta : number = ToRadian * ((selfData.TrueHeading) - (selfData.WindAzimuth + 180)); // זווית הפגיעה של הרוח במטוס
 
         for (let i = 0, t = Period; i < AmountOfPoints; ++i, t+= Period)
         {
@@ -49,14 +49,11 @@ export const noodle = () => {
             {
                 Points[i] = {X:Math.sign(rateOfTurn) * turnRadios * (1 - Math.cos(Beta)), Y:turnRadios * Math.sin(Beta)}
             }
-            const r:number = Math.abs(selfData.WindSpeed) * t;
+            const r:number = Math.abs(selfData.WindSpeed) * t;// העתק קרקעי כתוצאה מהרוח,  - מרחק הסטה בעקבות מהירות הרוח
 
             Points[i].X += (-r * Math.sin(Thetta))
             Points[i].Y += (r * Math.cos(Thetta))
-        }
-
-
-        
+        }        
     }
     
     function SetTurnFromSelfData():void{
@@ -84,7 +81,7 @@ export const noodle = () => {
 
     const FindShortestPath = (target:GeoCoordinate):GeoCoordinate[] => {
         const AmountOfPoints:number = 30;
-        const period:number = 150 / AmountOfPoints;
+        Period = 150 / AmountOfPoints;
 
         let diffAzim:number = (360 + (getRhumbLineBearing(selfData.Position, target) - selfData.TrueHeading)) % 360
         if(diffAzim > 0 && diffAzim < 180)
