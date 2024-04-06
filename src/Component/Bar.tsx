@@ -62,7 +62,7 @@ export const Bar = () => {
           </Collapse>
           <Divider />
           <ListItem sx={{ justifyContent: 'center' }}>
-            <Tooltip title="בחר חתך טיסה" placement='left'>
+            <Tooltip title="בחר לג טיסה" placement='left'>
               <IconButton onClick={() => dispatch(FlightLeg())}>
                 <FlightLandIcon sx={{ fontSize: '40px' }} />
               </IconButton>
@@ -70,7 +70,7 @@ export const Bar = () => {
           </ListItem>
           <Divider />
           <ListItem sx={{ justifyContent: 'center' }}>
-            <Tooltip title="בחר נקודת הצנחה" placement='left'>
+            <Tooltip title="בחר נקודת ניווט" placement='left'>
               <IconButton onClick={() => dispatch(Wpt())}>
                 <PinDropIcon sx={{ fontSize: '40px' }} />
               </IconButton>

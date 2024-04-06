@@ -11,6 +11,7 @@ import { IconButton } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { OpenDialog } from '../../state/slices/DialogsSlice';
 import { MapboxGeoJSONFeature } from 'mapbox-gl';
+import { WptMenu } from './WptMenu';
 
 export default function EntitiesMenu({EntityPoint, DecreaseMenuesCounter, Entity}:any) {
   const [open, setOpen] = useState(true) 
@@ -77,12 +78,7 @@ export default function EntitiesMenu({EntityPoint, DecreaseMenuesCounter, Entity
         הרחבת נתונים - דיאלוג
       </MenuItem>
       {(Entity.geometry.type == 'Point') ? 
-        <MenuItem>
-          <ListItemIcon>
-            <StraightIcon fontSize="small" />
-          </ListItemIcon>
-          Direct
-        </MenuItem>
+        <WptMenu />
         :
         <>
         </>
