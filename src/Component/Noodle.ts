@@ -20,6 +20,7 @@ export const noodle = () => {
     function NoodleCalc(currData:SelfData):GeoCoordinate[]
     {
         selfData = currData;
+        console.log(selfData)
         return CreateNoodle();
     }
 
@@ -122,5 +123,5 @@ export const noodle = () => {
         noodle.push(target);
         return noodle 
     }
-    return NoodleCalc;
+    return {NoodleCalc};
 }

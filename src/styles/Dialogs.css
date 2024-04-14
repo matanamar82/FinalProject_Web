@@ -1,13 +1,13 @@
 .WptCard{
     width: 25vw;
-    height: 30vh;
+    height: 40%;
     cursor: move;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   }
   
 .FlightLegCard{
 width: 45vw;
-height: 45vh;
+height: 60%;
 cursor: move;
 box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }

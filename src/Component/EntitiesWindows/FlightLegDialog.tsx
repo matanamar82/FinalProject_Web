@@ -22,9 +22,7 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                 display={'flex'}
                 height={'85%'}
             >
-                <Box 
-                    marginLeft={'4%'}
-                >
+                <Box>
                     <LineChart
                         // ציר x = המרחקים
                         xAxis={[{ data: properties.distancesArr }]}
@@ -41,8 +39,8 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                                 color: 'orange'
                             }
                         ]}
-                        width={410}
-                        height={330}
+                        width={350}
+                        height={300}
                     />
                 </Box>
                 <Box>

@@ -1,7 +1,7 @@
 import { useMap, Source, Layer, SymbolLayer, LineLayer } from "react-map-gl";
 import { useEffect, useState, useRef } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
-import selfPlane from "../Assets/Plane1.png"
+import selfPlane from '../Assets/Plane1.png'
 import { Feature, Position } from "geojson";
 import { noodle } from "./Noodle";
 
@@ -11,13 +11,16 @@ const selfDataClient = new W3CWebSocket("ws://localhost:5500/SelfData");
 const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
   const currMap = useMap().current;
   const isCenterRef = useRef();
-
   isCenterRef.current = isCenter;
 
   useEffect(() => {
-    if(currMap){
-      
-      currMap?.loadImage(selfPlane, 
+      loadImage()
+  }, []);
+
+  const loadImage = () => {
+    if(currMap)
+    {
+      currMap.loadImage(selfPlane, 
         function (error, image) 
         {
           if (error) {
@@ -25,66 +28,74 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
             return;
           }
       
-          if (image) {
-            currMap.addImage("selfPlane", image);
-          } else {
+          if (image) 
+          {
+            if (!currMap.hasImage("selfPlane")) {
+              currMap.addImage("selfPlane", image);
+            }
+          } 
+          else 
+          {
             console.error('Image is undefined');
           }
+
         });
         fetchForSelfData();
     }
-  }, []);
-
-  const fetchForSelfData = () => {
-      console.log("trying to connect to SelfData");
-      selfDataClient.onopen = () => {
-        console.log("Client Connected to SelfData!");
-      };
-      selfDataClient.onmessage = (message) => {       
-        const data = JSON.parse(message.data.toString());
-        console.log("data from 65 line: ")
-        console.log(data);
-        setSelfDataSource({
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [
-              data.Position.Longitude,
-              data.Position.Latitude,
-            ],
-          },
-          properties: {
-            callSign: data.CallSign,
-            trueTrack: data.TrueTrack,
-          },
-        });
-        console.log(data.TrueTrack);
-        if (isCenterRef.current) {
-          center(
-            data.Position.Latitude,
+  }
+  const fetchForSelfData = () => 
+  {
+    // console.log(currMap?.listImages())
+    console.log("trying to connect to SelfData");
+    selfDataClient.onopen = () => {
+      console.log("Client Connected to SelfData!");
+    };
+    selfDataClient.onmessage = (message) => {       
+      const data = JSON.parse(message.data.toString());
+      // console.log("data from 65 line: ")
+      // console.log(data);
+      setSelfDataSource({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [
             data.Position.Longitude,
-            9,
-            0,
-            data.TrueTrack
-          );
-        }
-        const noodleCalc = noodle();
-        const NoodleArr: Position[] = noodleCalc(data).map(GeoCoordinate => [GeoCoordinate.longitude, GeoCoordinate.latitude])
-        
-        const parsedData:Feature = {
-          type: "Feature",
-          geometry: {
-            type: "LineString",
-            coordinates: [...NoodleArr],
-          },
-          properties:{}
-        };
-        setNoodleSource(parsedData);
+            data.Position.Latitude,
+          ],
+        },
+        properties: {
+          callSign: data.CallSign,
+          trueTrack: data.TrueTrack,
+        },
+      });
+      console.log(data.TrueTrack);
+      if (isCenterRef.current) {
+        center(
+          data.Position.Latitude,
+          data.Position.Longitude,
+          9,
+          0,
+          data.TrueTrack
+        );
+      }
+      const {NoodleCalc} = noodle();
+      const NoodleArr: Position[] = NoodleCalc(data).map(GeoCoordinate => [GeoCoordinate.longitude, GeoCoordinate.latitude])
+      // console.log(NoodleArr)
+      
+      const parsedData:Feature = {
+        type: "Feature",
+        geometry: {
+          type: "LineString",
+          coordinates: [...NoodleArr],
+        },
+        properties:{}
       };
-      selfDataClient.onclose = () => {
-        setIsConnect(false);
-        setTimeout(fetchForSelfData, 10);
-      };
+      setNoodleSource(parsedData);
+    };
+    selfDataClient.onclose = () => {
+      setIsConnect(false);
+      setTimeout(fetchForSelfData, 10);
+    };
   };
 
   const [selfDataSource, setSelfDataSource] = useState<Feature>({
@@ -104,7 +115,7 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
       "icon-allow-overlap": true,
       "icon-rotation-alignment": "map",
       "icon-rotate": ["get", "trueTrack"],
-      "icon-image": "selfPlane",
+      "icon-image": 'selfPlane',
       "icon-size": 0.02,
     },
     
