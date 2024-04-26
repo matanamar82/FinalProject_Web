@@ -27,11 +27,11 @@ export const MapBox = ({ setIsConnect, barOption }) =>
   const { getFeaturesAroundPoint } = useMapUtils()
 
   const DecreaseMenuesCounter = () => {
-    console.log("decrease")
+    // console.log("decrease")
     if(EntitiesMenusCounter - 1 == 0)
     {
       setOpenMenu(false)
-      console.log("zero")
+      // console.log("zero")
     }
     SetCounter(EntitiesMenusCounter - 1);
   }

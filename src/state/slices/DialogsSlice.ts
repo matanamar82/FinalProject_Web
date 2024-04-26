@@ -2,11 +2,6 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { Dialog } from '../../types/DialogTypes';
 import { MapboxGeoJSONFeature } from 'mapbox-gl';
 
-// type DialogType = {
-//     Dialog: TextFieldsTypes[],
-//     id: number,
-//     properties: DialogPropsTypes
-// }
 type DialogsState = {
     Dialogs: Dialog[],
     isOpen: boolean,

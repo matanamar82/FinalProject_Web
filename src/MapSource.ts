@@ -39,7 +39,7 @@ const getEntity = (entityType:string, mission?: Feature<Geometry, GeoJsonPropert
     }
 }
 export const entitySources = (entityType:string, mission?: Feature<Geometry, GeoJsonProperties>[]): Source[] => {
-    console.log(mission)
+    // console.log(mission)
     return getEntity(entityType, mission)
     
 };

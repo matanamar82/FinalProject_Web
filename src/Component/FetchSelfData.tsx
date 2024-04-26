@@ -3,55 +3,54 @@ import { useEffect, useState, useRef } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import selfPlane from '../Assets/Plane1.png'
 import { Feature, Position } from "geojson";
-import { noodle } from "./Noodle";
+import { Noodle } from "./Noodle";
+import { useDispatch } from "react-redux";
+import { setSelfData } from "../state/slices/SelfDataSlice";
 
 
 const selfDataClient = new W3CWebSocket("ws://localhost:5500/SelfData");
 
-const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
+const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
   const currMap = useMap().current;
   const isCenterRef = useRef();
   isCenterRef.current = isCenter;
+  const dispatch = useDispatch();
 
   useEffect(() => {
-      loadImage()
+    loadImage()
   }, []);
 
   const loadImage = () => {
-    if(currMap)
-    {
-      currMap.loadImage(selfPlane, 
-        function (error, image) 
-        {
+    if (currMap) {
+      currMap.loadImage(selfPlane,
+        function (error, image) {
           if (error) {
             console.error('Error loading image:', error);
             return;
           }
-      
-          if (image) 
-          {
+
+          if (image) {
             if (!currMap.hasImage("selfPlane")) {
               currMap.addImage("selfPlane", image);
             }
-          } 
-          else 
-          {
+          }
+          else {
             console.error('Image is undefined');
           }
 
         });
-        fetchForSelfData();
+      fetchForSelfData();
     }
   }
-  const fetchForSelfData = () => 
-  {
+  const fetchForSelfData = () => {
     // console.log(currMap?.listImages())
     console.log("trying to connect to SelfData");
     selfDataClient.onopen = () => {
       console.log("Client Connected to SelfData!");
     };
-    selfDataClient.onmessage = (message) => {       
+    selfDataClient.onmessage = (message) => {
       const data = JSON.parse(message.data.toString());
+      dispatch(setSelfData(data))
       // console.log("data from 65 line: ")
       // console.log(data);
       setSelfDataSource({
@@ -68,7 +67,6 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
           trueTrack: data.TrueTrack,
         },
       });
-      console.log(data.TrueTrack);
       if (isCenterRef.current) {
         center(
           data.Position.Latitude,
@@ -78,17 +76,18 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
           data.TrueTrack
         );
       }
-      const {NoodleCalc} = noodle();
-      const NoodleArr: Position[] = NoodleCalc(data).map(GeoCoordinate => [GeoCoordinate.longitude, GeoCoordinate.latitude])
-      // console.log(NoodleArr)
+      // console.log(data.TrueTrack)
+      dispatch(setSelfData(data))
+      const { NoodleCalc } = Noodle();
+      const NoodleArr: Position[] = NoodleCalc(data)
       
-      const parsedData:Feature = {
+      const parsedData: Feature = {
         type: "Feature",
         geometry: {
           type: "LineString",
           coordinates: [...NoodleArr],
         },
-        properties:{}
+        properties: {}
       };
       setNoodleSource(parsedData);
     };
@@ -107,7 +106,7 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
     properties: {},
   });
 
-  const selfDataLayer:SymbolLayer = {
+  const selfDataLayer: SymbolLayer = {
     id: "selfData",
     type: "symbol",
     source: "selfData",
@@ -118,7 +117,7 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
       "icon-image": 'selfPlane',
       "icon-size": 0.02,
     },
-    
+
   };
 
   const [noodleSource, setNoodleSource] = useState<Feature>({
@@ -129,7 +128,7 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
     },
     properties: {},
   });
-  
+
   const [noodleLayer, setNoodleLayer] = useState<LineLayer>({
     id: "noodle",
     type: "line",
@@ -156,4 +155,4 @@ const FetchSelfData = ({center, isCenter, setIsConnect}:any) => {
   );
 };
 
-export default FetchSelfData;
+export default FetchSelfData;

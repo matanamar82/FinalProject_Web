@@ -7,7 +7,7 @@ import { AddDialog } from "../state/slices/DialogsSlice";
 const useCreateDialog = () => {
     const dispatch = useDispatch();
     const CreateDialog = (dialog: FlightLegProps | WptProps):Dialog => {
-        console.log(typeof(dialog))
+        // console.log(typeof(dialog))
         let newDialog: Dialog;
         if(dialog.type === 'LineString')
         {
@@ -98,7 +98,7 @@ const useCreateDialog = () => {
     function showDialog(dialog: any) 
     {
         dialog.then((res: any) => {
-            console.log(res)
+            // console.log(res)
             const Dialog:Dialog = CreateDialog(res)
             dispatch(AddDialog(Dialog))
         })

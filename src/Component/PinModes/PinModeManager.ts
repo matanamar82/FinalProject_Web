@@ -6,7 +6,7 @@ import { CURSOR_STYLE, PinModeActions } from "./PinAction";
 import { EntityType, MapEntityTypes, externalMapEntitiesType } from "../../types/EntityTypes";
 
 const enterPinMode = (map: MapRef | undefined, entity: MapEntityTypes) => {
-    console.log(entity)
+    // console.log(entity)
     if (map !== undefined) map.getCanvas().style.cursor = CURSOR_STYLE.CROSSHAIR;
     store.dispatch(startPinMode(entity));
 };

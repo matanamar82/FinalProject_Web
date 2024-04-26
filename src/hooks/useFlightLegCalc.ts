@@ -16,7 +16,7 @@ export const useFlightLegCalc = () => {
             {latitude: selfCoordinates[1], longitude: selfCoordinates[0]}, 
             {latitude: destCoordinates[1], longitude: destCoordinates[0]})
         
-        // console.log(`the azimuth is: ${Azimuth} degrees`)
+        console.log(`the azimuth is: ${Azimuth} degrees`)
 
 
         const distanceFromPoint = longDistance / 59 // 60 points
@@ -77,7 +77,6 @@ export const useFlightLegCalc = () => {
     }
     const getPointsInZone = (selfCoordinates:Position, destCoordinates:Position, distanceFromPoint:number, Azimuth:number): string[] => {
         
-        // const Azimuth = (450 - ToDegrees * Math.atan((Dest_Coordinates[1] - Self_Coordinates[1]) / (Dest_Coordinates[0] - Self_Coordinates[0]))) % 360
         // console.log(`P1: ${selfCoordinates}\nP2: ${destCoordinates}`)
         // console.log(`the azimuth is: ${Azimuth} degrees`)
         
