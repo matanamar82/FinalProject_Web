@@ -3,6 +3,7 @@ import pinModeSlice from '../slices/PinModeSlice';
 import EntitySlice from "../slices/EntitySlice";
 import DialogsSlice from "../slices/DialogsSlice";
 import SelfDataSlice from "../slices/SelfDataSlice";
+import NoodleSlice from "../slices/NoodleSlice";
 
 export const Store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const Store = configureStore({
         Entity: EntitySlice,
         dialogs: DialogsSlice,
         selfData: SelfDataSlice,
+        NoodleSlice: NoodleSlice,
     },
 });
 

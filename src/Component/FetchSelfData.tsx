@@ -1,11 +1,16 @@
 import { useMap, Source, Layer, SymbolLayer, LineLayer } from "react-map-gl";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import selfPlane from '../Assets/Plane1.png'
-import { Feature, Position } from "geojson";
+import { Feature } from "geojson";
 import { Noodle } from "./Noodle";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setSelfData } from "../state/slices/SelfDataSlice";
+import { noodleLayer } from "../layers/NoodleLayer";
+import { selfDataLayer } from "../layers/selfDataLayer";
+import { RootState } from "../state/stores/Store";
+import { setNoodle, setSelfDataSource, } from "../state/slices/NoodleSlice";
+import { directLayer } from "../layers/DirectLayer";
 
 
 const selfDataClient = new W3CWebSocket("ws://localhost:5500/SelfData");
@@ -14,6 +19,9 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
   const currMap = useMap().current;
   const isCenterRef = useRef();
   isCenterRef.current = isCenter;
+  const NoodleArr = useSelector((state: RootState) => state.NoodleSlice.Noodle)
+  const SelfData = useSelector((state: RootState) => state.NoodleSlice.SelfDataSource)
+  const DirectArr = useSelector((state: RootState) => state.NoodleSlice.Direct)
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -52,21 +60,12 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
       const data = JSON.parse(message.data.toString());
       dispatch(setSelfData(data))
       // console.log("data from 65 line: ")
-      // console.log(data);
-      setSelfDataSource({
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [
-            data.Position.Longitude,
-            data.Position.Latitude,
-          ],
-        },
-        properties: {
-          callSign: data.CallSign,
-          trueTrack: data.TrueTrack,
-        },
-      });
+      console.log(data);
+      dispatch(setSelfDataSource({
+        coordinates: [data.Position.Longitude, data.Position.Latitude], 
+        callSign: data.CallSign,
+        trueTrack: data.TrueTrack 
+      }))
       if (isCenterRef.current) {
         center(
           data.Position.Latitude,
@@ -76,73 +75,44 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
           data.TrueTrack
         );
       }
-      // console.log(data.TrueTrack)
-      dispatch(setSelfData(data))
       const { NoodleCalc } = Noodle();
-      const NoodleArr: Position[] = NoodleCalc(data)
-      
-      const parsedData: Feature = {
-        type: "Feature",
-        geometry: {
-          type: "LineString",
-          coordinates: [...NoodleArr],
-        },
-        properties: {}
-      };
-      setNoodleSource(parsedData);
+      dispatch(setNoodle(NoodleCalc(data)))
     };
     selfDataClient.onclose = () => {
       setIsConnect(false);
       setTimeout(fetchForSelfData, 10);
     };
   };
-
-  const [selfDataSource, setSelfDataSource] = useState<Feature>({
+  const selfDataSource:Feature = {
     type: "Feature",
     geometry: {
       type: "Point",
-      coordinates: [],
+      coordinates: SelfData.coordinates,
     },
-    properties: {},
-  });
-
-  const selfDataLayer: SymbolLayer = {
-    id: "selfData",
-    type: "symbol",
-    source: "selfData",
-    layout: {
-      "icon-allow-overlap": true,
-      "icon-rotation-alignment": "map",
-      "icon-rotate": ["get", "trueTrack"],
-      "icon-image": 'selfPlane',
-      "icon-size": 0.02,
+    properties: {
+      callSign: SelfData.callSign,
+      trueTrack: (SelfData.trueTrack * (Math.PI / 180))
+      
     },
-
   };
-
-  const [noodleSource, setNoodleSource] = useState<Feature>({
+  
+  const noodleSource:Feature = {
     type: "Feature",
     geometry: {
       type: "LineString",
-      coordinates: [],
+      coordinates: NoodleArr,
     },
     properties: {},
-  });
+  };
 
-  const [noodleLayer, setNoodleLayer] = useState<LineLayer>({
-    id: "noodle",
-    type: "line",
-    source: "noodle",
-    layout: {
-      "line-cap": "round",
-      "line-join": "round",
+  const directSource:Feature = {
+    type: 'Feature',
+    geometry: {
+      type: 'LineString',
+      coordinates: DirectArr,
     },
-    paint: {
-      "line-color": 'black',
-      "line-width": 4,
-    },
-  });
-
+    properties: {}
+  }
   return (
     <>
       <Source id="selfData" type="geojson" data={selfDataSource}>
@@ -150,6 +120,9 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
       </Source>
       <Source id="noodle" type="geojson" data={noodleSource}>
         <Layer {...noodleLayer} />
+      </Source>
+      <Source id="direct" type="geojson" data={directSource}>
+        <Layer {...directLayer} />
       </Source>
     </>
   );

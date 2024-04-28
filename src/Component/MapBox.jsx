@@ -27,11 +27,9 @@ export const MapBox = ({ setIsConnect, barOption }) =>
   const { getFeaturesAroundPoint } = useMapUtils()
 
   const DecreaseMenuesCounter = () => {
-    // console.log("decrease")
     if(EntitiesMenusCounter - 1 == 0)
     {
       setOpenMenu(false)
-      // console.log("zero")
     }
     SetCounter(EntitiesMenusCounter - 1);
   }
@@ -45,11 +43,9 @@ export const MapBox = ({ setIsConnect, barOption }) =>
 
   const EntitiesMenuHandle = (mapRef, point) => 
   {
-    console.log(point)
     const Features = getFeaturesAroundPoint(mapRef, point);
     if(Features.length != 0)
     {
-      console.log(Features);
       setFeaturesAroundPoint(Features);
       setOpenMenu(true)
       const Positions = []

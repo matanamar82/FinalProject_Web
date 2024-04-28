@@ -16,6 +16,7 @@ import { GeoCoordinate } from '../GeoCoordinate';
 import { RootState } from '../../state/stores/Store';
 import { getRhumbLineBearing } from 'geolib';
 import { GeolibInputCoordinates } from 'geolib/es/types';
+import { setDirect } from '../../state/slices/NoodleSlice';
 
 
 export default function EntitiesMenu({ EntityPoint, DecreaseMenuesCounter, Entity }: any) {
@@ -35,14 +36,8 @@ export default function EntitiesMenu({ EntityPoint, DecreaseMenuesCounter, Entit
   }
 
   const handleDirect = () => {
-    console.log(selfData)
-    // console.log(Entity.geometry.coordinates)
     const target: GeoCoordinate = { latitude: Entity.geometry.coordinates[1], longitude: Entity.geometry.coordinates[0] }
-    const SelfPosition:GeolibInputCoordinates = {latitude: selfData.Position.Latitude, longitude: selfData.Position.Longitude}
-    // console.log(getRhumbLineBearing(SelfPosition, target))
-
-    // console.log(getRhumbLineBearing({latitude: selfData.Position.Latitude, longitude: selfData.Position.Longitude}, target))
-    console.log(FindShortestPath(target, selfData))
+    dispatch(setDirect(FindShortestPath(target, selfData)))
     handleClose()
   }
 
