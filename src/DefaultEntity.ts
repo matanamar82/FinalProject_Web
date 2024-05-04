@@ -1,7 +1,7 @@
-import { GeoCoordinate } from "./Component/GeoCoordinate";
+import { GeolibCoordinate } from "./Component/GeoCoordinate";
 import { Entity, EntityType, entityTypes } from "./types/EntityTypes";
 
-export const defaultEntity = (coordinate: GeoCoordinate): { [key in EntityType]: Entity } => {
+export const defaultEntity = (coordinate: GeolibCoordinate): { [key in EntityType]: Entity } => {
     return {
         FlightLeg: {
             name: 'LZ_001',

@@ -3,9 +3,7 @@ import { MapRef } from "react-map-gl"
 import { sources } from "../MapSource";
 
 export const useMapUtils = () => {
-    // const lzones = useSelector((state: RootState) => state.Entity.FlightLegs);
     const getFeaturesAroundPoint = (map: MapRef, point: mapboxgl.Point): MapboxGeoJSONFeature[] => {
-        // console.log(map);
 
         const bbox: [PointLike, PointLike] = [
             [point.x - 5, point.y - 5],
@@ -13,16 +11,10 @@ export const useMapUtils = () => {
         ];
 
         if (map === undefined) throw Error;
-    
+        
         const features: MapboxGeoJSONFeature[] = map.queryRenderedFeatures(bbox, {
             layers: sources().map(src => src.layers.id)
         });
-
-        // console.log(features[0])
-        // const uniqueFeatures: MapboxGeoJSONFeature[] = features.filter(
-        //     (value: MapboxGeoJSONFeature, index: number, array: MapboxGeoJSONFeature[]) => 
-        //         array.findIndex((item: MapboxGeoJSONFeature) => item.id === value.id) === index
-        // );
 
         return features;
     };

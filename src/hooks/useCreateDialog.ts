@@ -97,11 +97,14 @@ const useCreateDialog = () => {
 
     function showDialog(dialog: any) 
     {
-        dialog.then((res: any) => {
-            // console.log(res)
-            const Dialog:Dialog = CreateDialog(res)
+        console.log(dialog)
+        const Dialog:Dialog = CreateDialog(dialog)
             dispatch(AddDialog(Dialog))
-        })
+        // dialog.then((res: any) => {
+        //     // console.log(res)
+        //     const Dialog:Dialog = CreateDialog(res)
+        //     dispatch(AddDialog(Dialog))
+        // })
     };
     return {showDialog};
 }

@@ -1,4 +1,4 @@
-export interface GeoCoordinate {
+export interface GeolibCoordinate {
     latitude: number,
     longitude: number
 }

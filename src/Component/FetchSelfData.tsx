@@ -60,11 +60,10 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
       const data = JSON.parse(message.data.toString());
       dispatch(setSelfData(data))
       // console.log("data from 65 line: ")
-      console.log(data);
       dispatch(setSelfDataSource({
-        coordinates: [data.Position.Longitude, data.Position.Latitude], 
+        coordinates: [data.Position.Longitude, data.Position.Latitude],
         callSign: data.CallSign,
-        trueTrack: data.TrueTrack 
+        trueTrack: data.TrueTrack
       }))
       if (isCenterRef.current) {
         center(
@@ -83,7 +82,10 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
       setTimeout(fetchForSelfData, 10);
     };
   };
-  const selfDataSource:Feature = {
+
+  console.log((SelfData.trueTrack * (Math.PI / 180)));
+
+  const selfDataSource: Feature = {
     type: "Feature",
     geometry: {
       type: "Point",
@@ -92,11 +94,11 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
     properties: {
       callSign: SelfData.callSign,
       trueTrack: (SelfData.trueTrack * (Math.PI / 180))
-      
+
     },
   };
-  
-  const noodleSource:Feature = {
+
+  const noodleSource: Feature = {
     type: "Feature",
     geometry: {
       type: "LineString",
@@ -105,7 +107,7 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
     properties: {},
   };
 
-  const directSource:Feature = {
+  const directSource: Feature = {
     type: 'Feature',
     geometry: {
       type: 'LineString',

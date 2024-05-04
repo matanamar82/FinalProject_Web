@@ -1,6 +1,6 @@
 import { FeatureCollection, Position } from "geojson";
 import { useEffect } from "react";
-import { Layer, Source, useMap } from "react-map-gl";
+import { Layer, Source } from "react-map-gl";
 import { useFlightLegCalc } from "./hooks/useFlightLegCalc";
 import { useDispatch } from "react-redux";
 import { Init, DecreaseClicks } from "./state/slices/PinModeSlice";
@@ -27,24 +27,11 @@ const EntityLoader = ({ point }: any) => {
     useEffect(() => {
         if (point && ClicksAmount !== 0) {
             if (Option != '') {
-                // console.log(`LZarr.length = ${points.length}`)
-                // console.log(`WPTarr.length = ${wptPointsArr.length}`)
                 if (Option === 'Wpt') {
                     const id:number = Wpts.length
-                    dispatch(AddWpt({ 
-                        type: 'Feature', 
-                        geometry: { 
-                            type: 'Point', 
-                            coordinates: [point.lng, point.lat] 
-                        }, 
-                        properties: {}, 
-                        id: id
-                    }))
                     dispatch(Init());
                     const name:string = `${entityTypes.WPT}-${Wpts.length}`
-                    const result = CreateWptDialog(point, id, name).then((res:any) => res)
-                    showDialog(result)
-                    // console.log(result)
+                    CreateWptDialog(point, id, name).then((res:any) => res)
                 }
                 else if (ClicksAmount > 0 && Option === 'FlightLeg') {
                     console.log(FlightLegs.length)
@@ -54,10 +41,9 @@ const EntityLoader = ({ point }: any) => {
                         points: [...points, { type: 'Feature', geometry: { type: 'Point', coordinates: [point.lng, point.lat] }, properties: {} }]
                     }))
                 }
-                // console.log(point);
             }
         }
-    }, [point]) // מוסיף נקודה למסך דרך המערך
+    }, [point])
 
     useEffect(() => {
         if (points.length == 2) {
@@ -69,53 +55,78 @@ const EntityLoader = ({ point }: any) => {
                 const Self_Coordinates = SelfPosition.geometry.coordinates
                 const Dest_Coordinates = DestinationPosition.geometry.coordinates
                 const id:number = FlightLegs.length
-
-                if (Self_Coordinates !== Dest_Coordinates) {
-                    dispatch(AddFlightLeg({ 
-                        type: 'Feature', 
-                        geometry: { 
-                            type: 'LineString', 
-                            coordinates: [Self_Coordinates, Dest_Coordinates] 
-                        }, 
-                        properties: {}, 
-                        id: id
-                    }))
-                }
                 const name:string = `FlightLeg-${FlightLegs.length}`
-                const result = CreateFlightLegDialog(Self_Coordinates, Dest_Coordinates, name, id)
-                showDialog(result)
+                CreateFlightLegDialog(Self_Coordinates, Dest_Coordinates, name, id)
             }
             dispatch(Init())
         }
-    }, [points]) // מוסיף קו המחבר בין 2 הנקודות, אשר מסמנות את חתך הטיסה 
+    }, [points]) 
 
     const CreateFlightLegDialog = async(Self_Coordinates:Position, Dest_Coordinates:Position, name:string, id:number) => {
         const Result = await getFlightLegElevations(Self_Coordinates, Dest_Coordinates)
-        const dialog: FlightLegProps = {
-            id: id,
-            type: 'LineString',
-            name: name,
-            elevationsArr: Result.avgArr,
-            distancesArr: Result.distanceArr,
-            distance: Result.longDistance,
-            selfCoordinates: Self_Coordinates,
-            destCoordinates: Dest_Coordinates,
-            maxElevation: max(...Result.avgArr),
-            minElevation: min(...Result.avgArr)
+        if(Result)
+        {
+            const dialog: FlightLegProps = {
+                id: id,
+                type: 'LineString',
+                name: name,
+                elevationsArr: Result.avgArr,
+                distancesArr: Result.distanceArr,
+                distance: Result.longDistance,
+                selfCoordinates: Self_Coordinates,
+                destCoordinates: Dest_Coordinates,
+                maxElevation: max(...Result.avgArr),
+                minElevation: min(...Result.avgArr)
+            }
+            dispatch(AddFlightLeg({ 
+                type: 'Feature', 
+                geometry: { 
+                    type: 'LineString', 
+                    coordinates: [Self_Coordinates, Dest_Coordinates] 
+                }, 
+                properties: {}, 
+                id: id
+            }))
+            showDialog(dialog)
+            return true;
         }
-        return dialog;
+        else
+        {
+            alert("ישנה בעיה בקבלת הנתונים מן השרת. בדוק שהחיבור תקין או שתנסה שנית מאוחר יותר!");
+            return true;
+        }
+        
     }
 
     const CreateWptDialog = async(point:any, id:number, name:string) => {
         const elevation = await getElevations([`${point.lat},${point.lng}`])
-        const dialog: WptProps = {
-            id: id,
-            type: 'Point',
-            name: name,
-            PointElevation: elevation[0].elevation,
-            selfCoordinates: [point.lng, point.lat]
+        if(elevation)
+        {
+            dispatch(AddWpt({ 
+                type: 'Feature', 
+                geometry: { 
+                    type: 'Point', 
+                    coordinates: [point.lng, point.lat] 
+                }, 
+                properties: {}, 
+                id: id
+            }))
+            const dialog: WptProps = {
+                id: id,
+                type: 'Point',
+                name: name,
+                PointElevation: elevation[0].elevation,
+                selfCoordinates: [point.lng, point.lat]
+            }
+            showDialog(dialog)
+            return true; 
         }
-        return dialog; 
+        else
+        {
+            alert("ישנה בעיה בקבלת הנתונים מן השרת. בדוק שהחיבור תקין או שתנסה שנית מאוחר יותר!");
+            return true
+        }
+        
     }
 
     const geojsonFL: FeatureCollection = {

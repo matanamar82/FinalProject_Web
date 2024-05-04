@@ -14,7 +14,7 @@ import {
 import Drawer from '@mui/material/Drawer';
 import FlightIcon from '@mui/icons-material/Flight';
 import '../styles/Bar.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import FlightLandIcon from '@mui/icons-material/FlightLand';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 import { useDispatch } from 'react-redux';

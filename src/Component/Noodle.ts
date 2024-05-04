@@ -4,7 +4,7 @@ import 'geolib'
 import { computeDestinationPoint, getDistance, getRhumbLineBearing } from "geolib";
 import { Position } from "geojson";
 import { GeolibInputCoordinates } from "geolib/es/types";
-import { GeoCoordinate } from "./GeoCoordinate";
+import { GeolibCoordinate } from "./GeoCoordinate";
 
 export const Noodle = () => {
     const AmountOfPoints: number = 30;
@@ -14,8 +14,8 @@ export const Noodle = () => {
     const gravity: number = 9.81;
     const MaxAngleToDirect = 20;
     let Points: PointTypes[] = [];
-    let SelfData:SelfData = {
-        Position: {Latitude: 0, Longitude: 0},
+    let SelfData: SelfData = {
+        Position: { Latitude: 0, Longitude: 0 },
         CallSign: "Samson",
         TrueAirSpeed: 100,
         RateOfTurn: 0,
@@ -31,39 +31,37 @@ export const Noodle = () => {
     };
     let Noodle: Position[] = [];
     let RollAngle: number;
-    let SelfPosition: GeolibInputCoordinates = {latitude: 0, longitude: 0};
+    let SelfPosition: GeolibInputCoordinates = { latitude: 0, longitude: 0 };
 
-    function NoodleCalc(currData: SelfData):Position[]{
+    function NoodleCalc(currData: SelfData): Position[] {
         SelfData = currData
-        SelfPosition = {latitude: SelfData.Position.Latitude, longitude: SelfData.Position.Longitude}
+        SelfPosition = { latitude: SelfData.Position.Latitude, longitude: SelfData.Position.Longitude }
+        // console.log(SelfData)
+        // console.log(SelfPosition)
         return CreateNoodle();
     }
 
     function CreateNoodle(): Position[] {
         RollAngle = SelfData.RollAngle;
-        // console.log(SelfData)
         CalculateNoodle();
         Noodle.push([SelfData.Position.Longitude, SelfData.Position.Latitude])
         for (let i = 0; i < AmountOfPoints; i++) {
             const Distance: number = GetCartesianDistance(Points[i]);
             const Bearing: number = SelfData.TrueHeading + GetCartesianAzim(Points[i])
-            const NextPoint:GeolibInputCoordinates = computeDestinationPoint(
+            const NextPoint: GeolibInputCoordinates = computeDestinationPoint(
                 SelfPosition,
                 Distance,
                 Bearing
             )
             Noodle.push([Number(NextPoint.longitude), Number(NextPoint.latitude)])
         }
-        // console.log(Noodle)
         return Noodle;
     }
 
     function CalculateNoodle(): void {
         let rateOfTurn: number = GetRateOfTurn();
-        // console.log(`rate of turn from data is: ${SelfData.RateOfTurn}`)
         let turnRadios: number = GetTurnRadios(rateOfTurn);
-        let Thetta: number = ToRadian * ((SelfData.TrueHeading) - (SelfData.WindAzimuth + 180)); // זווית הפגיעה של הרוח במטוס
-
+        let Thetta: number = ToRadian * ((SelfData.TrueHeading) - (SelfData.WindAzimuth + 180));
         for (let i = 0, t = Period; i < AmountOfPoints; ++i, t += Period) {
             const Beta: number = (Math.abs(t * SelfData.RateOfTurn * ToRadian));
             if (Math.abs(SelfData.RateOfTurn) < 0.001) {
@@ -72,7 +70,7 @@ export const Noodle = () => {
             else {
                 Points[i] = { X: Math.sign(rateOfTurn) * turnRadios * (1 - Math.cos(Beta)), Y: turnRadios * Math.sin(Beta) }
             }
-            const r: number = Math.abs(SelfData.WindSpeed) * t;// העתק קרקעי כתוצאה מהרוח,  - מרחק הסטה בעקבות מהירות הרוח
+            const r: number = Math.abs(SelfData.WindSpeed) * t;
 
             Points[i].X += (-r * Math.sin(Thetta))
             Points[i].Y += (r * Math.cos(Thetta))
@@ -88,7 +86,7 @@ export const Noodle = () => {
     }
 
     function GetTurnRadios(rateOfTurn: number): number {
-        return (SelfData.TrueAirSpeed) / Math.abs(rateOfTurn * ToRadian)
+        return (SelfData.GroundSpeed) / Math.abs(rateOfTurn * ToRadian)
     }
 
     function GetCartesianAzim(point: PointTypes): number {
@@ -101,19 +99,18 @@ export const Noodle = () => {
         return Math.sqrt(Math.pow(point.Y, 2) + Math.pow(point.X, 2))
     }
 
-    function FindShortestPath(target: GeoCoordinate, currData:SelfData): Position[] {
+    function FindShortestPath(target: GeolibCoordinate, currData: SelfData): Position[] {
         SelfData = currData
-        SelfPosition = {latitude: SelfData.Position.Latitude, longitude: SelfData.Position.Longitude}
-        // console.log(SelfPosition)
+        SelfPosition = { latitude: SelfData.Position.Latitude, longitude: SelfData.Position.Longitude }
         const AmountOfPoints: number = 30;
         Period = 150 / AmountOfPoints;
-        // debugger
         let diffAzim: number = (360 + (getRhumbLineBearing(SelfPosition, target) - SelfData.TrueHeading)) % 360
-        // console.log(`diffAzim: ${diffAzim}`)
+
         if (diffAzim > 0 && diffAzim < 180)
             RollAngle = 20;
         else
             RollAngle = -20;
+
         let turnRadios = GetTurnRadios(GetRateOfTurn());
 
         if (getDistance(SelfPosition, target) < 2 * turnRadios) {
@@ -121,37 +118,33 @@ export const Noodle = () => {
             return GeoCoordinateArr;
         }
         const tempNoodle: Position[] = CreateNoodle();
-        // console.log(tempNoodle)
         let noodle: Position[] = [];
+        debugger
         let isFound: boolean = false;
         for (let i = 0; i < AmountOfPoints - 1; i += 2) {
             noodle.push(tempNoodle[i]);
             noodle.push(tempNoodle[i + 1]);
-            
+
             let lineAngle = getRhumbLineBearing(
-                {latitude: tempNoodle[i][1], longitude: tempNoodle[i][0]}, 
-                {latitude: tempNoodle[i + 1][1], longitude: tempNoodle[i + 1][0]}
+                { latitude: tempNoodle[i][1], longitude: tempNoodle[i][0] },
+                { latitude: tempNoodle[i + 1][1], longitude: tempNoodle[i + 1][0] }
             );
             let targetAngle = getRhumbLineBearing(
-                {latitude: tempNoodle[i + 1][1], longitude: tempNoodle[i + 1][0]}, 
+                { latitude: tempNoodle[i + 1][1], longitude: tempNoodle[i + 1][0] },
                 target
             );
-            // console.log(lineAngle, targetAngle)
             let lineToTargetAngle = Math.abs(lineAngle - targetAngle);
-            // console.log(`lineToTargetAngle = ${lineToTargetAngle}, MaxAngleToDirect = ${MaxAngleToDirect}`)
+
             if (lineToTargetAngle < MaxAngleToDirect) {
                 isFound = !isFound;
                 break;
             }
         }
-        // console.log(noodle)
         if (isFound == false) {
             const Coordinates: Position[] = [[SelfData.Position.Longitude, SelfData.Position.Latitude], [target.longitude, target.latitude]]
             return Coordinates;
         }
-
         noodle.push([target.longitude, target.latitude]);
-        //console.log(noodle)
         return noodle
     }
     return { NoodleCalc, FindShortestPath };
