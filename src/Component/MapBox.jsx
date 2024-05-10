@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Map } from "react-map-gl";
 import FetchSelfData from "./FetchSelfData";
 import CenterMapBtn from "./CenterMapBtn";
-import EntityLoader from "../EntityLoader";
+import EntityLoader from "./EntityLoader";
 import MapLibreGL from "maplibre-gl";
 import { useDispatch } from "react-redux";
 import { useMapUtils } from "../hooks/useMapUtils";
@@ -20,14 +20,15 @@ export const MapBox = ({ setIsConnect, barOption }) =>
   const [Point, setPoint] = useState(null);
   const [cursor, setCursor] = useState('crosshair')
   const [FeaturesAroundPoint, setFeaturesAroundPoint] = useState([]);
-  const [EntitiesPositions, setEntitiesPositions] = useState({x: 0, y: 0})
+  const [EntitiesPositions, setEntitiesPositions] = useState({ x: 0, y: 0 })
   const [OpenMenu, setOpenMenu] = useState(false);
   const mapRef = useRef(null)
   const [EntitiesMenusCounter, SetCounter] = useState(0);
   const { getFeaturesAroundPoint } = useMapUtils()
 
-  const DecreaseMenuesCounter = () => {
-    if(EntitiesMenusCounter - 1 == 0)
+  const DecreaseMenuesCounter = () =>
+  {
+    if (EntitiesMenusCounter - 1 == 0)
     {
       setOpenMenu(false)
     }
@@ -44,13 +45,14 @@ export const MapBox = ({ setIsConnect, barOption }) =>
   const EntitiesMenuHandle = (mapRef, point) => 
   {
     const Features = getFeaturesAroundPoint(mapRef, point);
-    if(Features.length != 0)
+    if (Features.length != 0)
     {
       setFeaturesAroundPoint(Features);
       setOpenMenu(true)
       const Positions = []
-      Features.forEach(feature => {
-        if(feature.geometry.type === 'Point')
+      Features.forEach(feature =>
+      {
+        if (feature.geometry.type === 'Point')
           Positions.push(mapRef.project(feature.geometry.coordinates))
         else if (feature.geometry.type === 'LineString')
           Positions.push(mapRef.project(feature.geometry.coordinates[0]))
@@ -82,7 +84,7 @@ export const MapBox = ({ setIsConnect, barOption }) =>
       >
         <EntityLoader point={Point} />
         {OpenMenu && EntitiesPositions.map(
-          (Entity, i) => <EntitiesMenu EntityPoint={Entity} DecreaseMenuesCounter={DecreaseMenuesCounter} Entity={FeaturesAroundPoint[i]}/>
+          (Entity, i) => <EntitiesMenu EntityPoint={Entity} DecreaseMenuesCounter={DecreaseMenuesCounter} Entity={FeaturesAroundPoint[i]} />
         )}
         <FetchSelfData
           isCenter={isCentered}

@@ -11,8 +11,6 @@ const initialState: EntityState = {
     FlightLegs: [],
     Wpts: [],
     ClickedEntity: null,
-    
-
 }
 
 const EntitySlice = createSlice({

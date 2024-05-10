@@ -10,9 +10,7 @@ function DialogComponent({ dialog }: { dialog: Dialog }) {
     const handleDrag = (_e: DraggableEvent, data: DraggableData) => {
         setDraggablePosition({ x: Math.min(data.x), y: data.y })
     }
-    // useEffect(() => {
-    //     console.log(dialog)
-    // }, [])
+
     return (
         
         <Draggable

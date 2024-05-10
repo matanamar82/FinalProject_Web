@@ -7,12 +7,14 @@ export type TextFieldsTypes =
 {
     label:string,
     id:string,
-    value: string | number
+    value: string | number,
+    moreDetails:string
 };
+
 export type Dialog = {
     id: number,
     properties: FlightLegProps | WptProps
-    dialog: TextFieldsTypes[]
+    dialog: TextFieldsTypes[],
 }
 
 interface baseDialogProps {

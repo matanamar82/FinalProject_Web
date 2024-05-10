@@ -1,8 +1,8 @@
 import { AnyLayer } from "react-map-gl";
-import { MapEntityTypes, entityTypes } from "./types/EntityTypes";
+import { MapEntityTypes, entityTypes } from "../types/EntityTypes";
 import { Feature, GeoJsonProperties, Geometry } from "geojson";
-import { FlightLegLayer } from "./layers/FlightLegLayer";
-import { WptPointsLayer } from "./layers/WptLayer";
+import { FlightLegLayer } from "../layers/FlightLegLayer";
+import { WptPointsLayer } from "../layers/WptLayer";
 
 export interface Source {
     id: MapEntityTypes;
@@ -10,8 +10,8 @@ export interface Source {
     source?: Feature<Geometry, GeoJsonProperties>[];
 }
 
-const getEntity = (entityType:string, mission?: Feature<Geometry, GeoJsonProperties>[]): Source[] => {
-    switch(entityType) {
+const getEntity = (entityType: string, mission?: Feature<Geometry, GeoJsonProperties>[]): Source[] => {
+    switch (entityType) {
         case entityTypes.FlightLeg:
             return [
                 {
@@ -38,10 +38,10 @@ const getEntity = (entityType:string, mission?: Feature<Geometry, GeoJsonPropert
             ]
     }
 }
-export const entitySources = (entityType:string, mission?: Feature<Geometry, GeoJsonProperties>[]): Source[] => {
+export const entitySources = (entityType: string, mission?: Feature<Geometry, GeoJsonProperties>[]): Source[] => {
     // console.log(mission)
     return getEntity(entityType, mission)
-    
+
 };
 
 const sources = (

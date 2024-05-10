@@ -1,4 +1,4 @@
-import { GeolibCoordinate } from "../Component/GeoCoordinate";
+import { GeolibCoordinate } from "./GeoCoordinate";
 
 export const entityTypes = {
     WPT: 'wpt',
@@ -22,8 +22,6 @@ export interface Wpt extends BaseEntity {
 export interface FlightLeg extends BaseEntity {
     endPosition: GeolibCoordinate,
     centerPosition: GeolibCoordinate,
-    // type: string,
-    // altitude: number;
 }
 
 export type Entity =

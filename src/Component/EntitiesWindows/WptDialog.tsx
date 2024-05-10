@@ -28,7 +28,6 @@ const WptDialog = ({ dialog }: { dialog: Dialog }) => {
                         }}
                     >
                         {TextFields.map((Field, i) => {
-                            // console.log(Filed)
                             return <TextField
                                 key={i}
                                 className="TextField"
@@ -37,8 +36,7 @@ const WptDialog = ({ dialog }: { dialog: Dialog }) => {
                                 label={Field.label}
                                 id={Field.id}
                                 color={'success'}
-                                value={Field.value}
-                                // onChange={(e) => handleFieldChange(e, Field.id)}
+                                value={Field.moreDetails}
                                 focused
 
                             />

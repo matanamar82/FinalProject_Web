@@ -6,16 +6,14 @@ import StraightIcon from '@mui/icons-material/Straight';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import ClearIcon from '@mui/icons-material/Clear';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IconButton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { OpenDialog } from '../../state/slices/DialogsSlice';
 import HeightIcon from '@mui/icons-material/Height';
 import { Noodle } from '../Noodle';
-import { GeolibCoordinate } from '../GeoCoordinate';
+import { GeolibCoordinate } from '../../types/GeoCoordinate';
 import { RootState } from '../../state/stores/Store';
-import { getRhumbLineBearing } from 'geolib';
-import { GeolibInputCoordinates } from 'geolib/es/types';
 import { setDirect } from '../../state/slices/NoodleSlice';
 
 
@@ -37,7 +35,7 @@ export default function EntitiesMenu({ EntityPoint, DecreaseMenuesCounter, Entit
 
   const handleDirect = () => {
     const target: GeolibCoordinate = { latitude: Entity.geometry.coordinates[1], longitude: Entity.geometry.coordinates[0] }
-    if((selfData.Position.Latitude != 0) && (selfData.Position.Longitude != 0))
+    if ((selfData.Position.Latitude != 0) && (selfData.Position.Longitude != 0))
       dispatch(setDirect(FindShortestPath(target, selfData)))
     else
       alert("לא התקבלו עדיין נתונים על המיקום הנוכחי של המטוס, נסה שנית מאוחר יותר")
@@ -66,7 +64,6 @@ export default function EntitiesMenu({ EntityPoint, DecreaseMenuesCounter, Entit
           '&::before': {
             content: '""',
             display: 'block',
-            // position: 'absolute',
             top: 0,
             right: 14,
             width: 10,
@@ -77,8 +74,6 @@ export default function EntitiesMenu({ EntityPoint, DecreaseMenuesCounter, Entit
           },
         },
       }}
-    // transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-    // anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
     >
       <Box className='closeBtn'>
         <IconButton onClick={handleClose}>

@@ -6,7 +6,6 @@ type DialogsState = {
     Dialogs: Dialog[],
     isOpen: boolean,
     CurrentDialog: Dialog | undefined
-
 }
 
 const initialState:DialogsState = {
@@ -18,7 +17,6 @@ const initialState:DialogsState = {
 const DialogsSlice = createSlice({
     name: 'Dialogs',
     initialState, 
-
     reducers: {
         AddDialog: (state, action: PayloadAction<Dialog>) => {
             state.Dialogs.push(action.payload) 

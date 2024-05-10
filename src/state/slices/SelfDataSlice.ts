@@ -1,13 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit"
-import { SelfData } from "../../Component/Dto"
+import { SelfData } from "../../types/Dto"
 
 type SelfDataTypes = {
     selfData: SelfData
 }
 
-const initialState:SelfDataTypes = {
+const initialState: SelfDataTypes = {
     selfData: {
-        Position: {Latitude: 0, Longitude: 0},
+        Position: { Latitude: 0, Longitude: 0 },
         CallSign: "Samson",
         TrueAirSpeed: 100,
         RateOfTurn: 0,
@@ -33,6 +33,6 @@ const SelfDataSlice = createSlice({
     }
 })
 
-export const {setSelfData} = SelfDataSlice.actions;
+export const { setSelfData } = SelfDataSlice.actions;
 
 export default SelfDataSlice.reducer

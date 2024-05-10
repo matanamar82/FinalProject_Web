@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { Bar } from './Component/Bar';
 import { MapBox } from './Component/MapBox';
@@ -11,7 +11,6 @@ function App() {
   const DialogIsOpen = useSelector((state: RootState) => state.dialogs.isOpen);
   const [IsConnect, setIsConnect] = useState<boolean>(false);
   const CurrentDialog = useSelector((state: RootState) => state.dialogs.CurrentDialog) 
-
   return (
     <div className="App">
       <Bar />

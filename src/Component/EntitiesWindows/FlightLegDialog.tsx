@@ -1,9 +1,10 @@
-import { Box, IconButton, TextField } from "@mui/material"
+import { Box, IconButton, Select, TextField, Checkbox, MenuItem, InputLabel, FormControl, FormControlLabel } from "@mui/material"
 import { LineChart } from "@mui/x-charts"
 import ClearIcon from '@mui/icons-material/Clear';
 import { useDispatch } from "react-redux";
 import { CloseDialog } from "../../state/slices/DialogsSlice";
 import { Dialog, FlightLegProps } from "../../types/DialogTypes";
+import { useEffect, useState } from "react";
 
 function checkDistance(distance: number): boolean {
     return (distance >= 1000 && distance <= 3000)
@@ -13,6 +14,26 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
     const dispatch = useDispatch();
     const properties = dialog.properties as FlightLegProps;
     const TextFields = dialog.dialog;
+    const [SafeElevatiion, setSafeElevation] = useState<number | undefined>(undefined);
+    const [ShowSelect, setShowSelect] = useState<Boolean>(false);
+    const [FlightSection, SetFlightSection] = useState<number[]>([])
+    useEffect(() => {
+        if(ShowSelect === false)
+        {
+            SetFlightSection(properties.elevationsArr.map(() => 
+                (Number(properties.maxElevation) + 300*0.3048)))
+        }
+    },[ShowSelect])
+
+    useEffect(() => {
+        if(SafeElevatiion)
+            SetFlightSection([])
+    }, [SafeElevatiion])
+
+    function HandleSafeElevation(elevation:string | undefined)
+    {
+        setSafeElevation(Number(elevation))
+    }
     return(
         <>
             <Box className='closeBtn' sx={{ height: '15%', marginRight: '3%' }}>
@@ -35,12 +56,18 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                             },
                             {
                                 data: properties.elevationsArr.map(elevation => 
-                                    (elevation === properties.maxElevation || elevation === properties.minElevation) ? elevation : null),
-                                color: 'orange'
+                                    (elevation === Math.max(...properties.elevationsArr) || elevation === Math.min(...properties.elevationsArr)) ? elevation : null),
+                                color: 'orange',
+                            },
+                            {
+                                data: FlightSection,
+                                showMark: false,
+                                connectNulls: true
+                                
                             }
                         ]}
                         width={350}
-                        height={300}
+                        height={350}
                     />
                 </Box>
                 <Box>
@@ -53,7 +80,6 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                         }}
                     >
                         {TextFields.map((Field, i) => {
-                            // console.log(Filed)
                             return <TextField
                                 key={i}
                                 className="TextField"
@@ -62,8 +88,7 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                                 label={Field.label}
                                 id={Field.id}
                                 color={Field.id === 'FlightLegLength' ? (checkDistance(Number(Field.value)) ? 'success' : 'error') : 'success'}
-                                value={Field.value}
-                                // onChange={(e) => handleFieldChange(e, Field.id)}
+                                value={Field.moreDetails}
                                 focused
 
                             />
@@ -75,6 +100,30 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                             variant="filled"
 
                         />
+                        <Box flexDirection={'row'} display={'flex'} margin={1}>
+                            <FormControl>
+                                <InputLabel id="Safe-Elevation-label">גובה ביטחון</InputLabel>
+                                <Select
+                                    disabled={!ShowSelect}
+                                    id="Safe Elevation"
+                                    label='גובה ביטחון'
+                                    labelId="Safe-Elevation-label"
+                                    className="TextField"
+                                    dir="rtl"
+                                    onChange={(evt) => HandleSafeElevation(evt.target.value)}
+                                    sx={{marginRight:'1vw'}}
+                                    value={undefined}
+                                >
+                                    <MenuItem value={300} dir="rtl">300 לגים</MenuItem>
+                                    <MenuItem value={500} dir="rtl">500 לגים</MenuItem>
+                                    <MenuItem value={1000} dir="rtl">1000 לגים</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControlLabel
+                                control={<Checkbox onChange={() => setShowSelect(!ShowSelect)}/>}
+                                label="בקרת גלישה"
+                            />
+                        </Box>
                     </Box>
                 </Box>
             </Box>

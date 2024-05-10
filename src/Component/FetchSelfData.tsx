@@ -1,4 +1,4 @@
-import { useMap, Source, Layer, SymbolLayer, LineLayer } from "react-map-gl";
+import { useMap, Source, Layer } from "react-map-gl";
 import { useEffect, useRef } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import selfPlane from '../Assets/Plane1.png'
@@ -82,8 +82,6 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
       setTimeout(fetchForSelfData, 10);
     };
   };
-
-  console.log((SelfData.trueTrack * (Math.PI / 180)));
 
   const selfDataSource: Feature = {
     type: "Feature",

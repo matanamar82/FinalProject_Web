@@ -1,10 +1,10 @@
 import { PointTypes } from "../types/PointTypes"
-import { SelfData } from "./Dto";
+import { SelfData } from "../types/Dto";
 import 'geolib'
 import { computeDestinationPoint, getDistance, getRhumbLineBearing } from "geolib";
 import { Position } from "geojson";
 import { GeolibInputCoordinates } from "geolib/es/types";
-import { GeolibCoordinate } from "./GeoCoordinate";
+import { GeolibCoordinate } from "../types/GeoCoordinate";
 
 export const Noodle = () => {
     const AmountOfPoints: number = 30;
@@ -33,11 +33,11 @@ export const Noodle = () => {
     let RollAngle: number;
     let SelfPosition: GeolibInputCoordinates = { latitude: 0, longitude: 0 };
 
-    function NoodleCalc(currData: SelfData): Position[] {
-        SelfData = currData
-        SelfPosition = { latitude: SelfData.Position.Latitude, longitude: SelfData.Position.Longitude }
-        // console.log(SelfData)
-        // console.log(SelfPosition)
+    function NoodleCalc(currData?: SelfData): Position[] {
+        if(currData){
+            SelfData = currData
+            SelfPosition = { latitude: SelfData.Position.Latitude, longitude: SelfData.Position.Longitude }
+        }
         return CreateNoodle();
     }
 
@@ -113,7 +113,8 @@ export const Noodle = () => {
 
         let turnRadios = GetTurnRadios(GetRateOfTurn());
 
-        if (getDistance(SelfPosition, target) < 2 * turnRadios) {
+        const distanceBetweenPoints = getDistance(SelfPosition, target);
+        if (distanceBetweenPoints < 2 * turnRadios) {
             const GeoCoordinateArr: Position[] = [[SelfData.Position.Longitude, SelfData.Position.Latitude], [target.longitude, target.latitude]]
             return GeoCoordinateArr;
         }
@@ -147,5 +148,8 @@ export const Noodle = () => {
         noodle.push([target.longitude, target.latitude]);
         return noodle
     }
+
+    
+
     return { NoodleCalc, FindShortestPath };
 }
