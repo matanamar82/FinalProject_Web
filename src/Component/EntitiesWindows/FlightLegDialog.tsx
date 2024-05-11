@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { CloseDialog } from "../../state/slices/DialogsSlice";
 import { Dialog, FlightLegProps } from "../../types/DialogTypes";
 import { useEffect, useState } from "react";
+import { CreateSegmentsPointsArr } from "../../FlightSection/FlightSectionFunc";
 
 function checkDistance(distance: number): boolean {
     return (distance >= 1000 && distance <= 3000)
@@ -17,6 +18,8 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
     const [SafeElevatiion, setSafeElevation] = useState<number | undefined>(undefined);
     const [ShowSelect, setShowSelect] = useState<Boolean>(false);
     const [FlightSection, SetFlightSection] = useState<number[]>([])
+    const SegmentsPointsArr = CreateSegmentsPointsArr(properties); 
+    let stop = false
     useEffect(() => {
         if(ShowSelect === false)
         {
@@ -29,6 +32,14 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
         if(SafeElevatiion)
             SetFlightSection([])
     }, [SafeElevatiion])
+
+    useEffect(() => {
+        if(!stop)
+        {
+            console.log(SegmentsPointsArr)
+            stop = true;
+        }
+    }, [])
 
     function HandleSafeElevation(elevation:string | undefined)
     {

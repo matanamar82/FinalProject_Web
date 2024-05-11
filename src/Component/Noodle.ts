@@ -33,10 +33,15 @@ export const Noodle = () => {
     let RollAngle: number;
     let SelfPosition: GeolibInputCoordinates = { latitude: 0, longitude: 0 };
 
-    function NoodleCalc(currData?: SelfData): Position[] {
+    function NoodleCalc(currData?: SelfData, LegStartPosition?:Position, TrueHeading?:number): Position[] {
         if(currData){
             SelfData = currData
             SelfPosition = { latitude: SelfData.Position.Latitude, longitude: SelfData.Position.Longitude }
+        }
+        else if(LegStartPosition && TrueHeading){
+            SelfData.Position = { Latitude: LegStartPosition[1], Longitude: LegStartPosition[0] }
+            SelfData.TrueHeading = TrueHeading
+            SelfPosition = { latitude: LegStartPosition[1], longitude: LegStartPosition[0] }
         }
         return CreateNoodle();
     }
@@ -149,7 +154,7 @@ export const Noodle = () => {
         return noodle
     }
 
-    
+
 
     return { NoodleCalc, FindShortestPath };
 }

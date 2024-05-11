@@ -109,7 +109,6 @@ const useCreateDialog = () => {
 
     function showDialog(dialog: any) 
     {
-        console.log(dialog)
         const Dialog:Dialog = CreateDialog(dialog)
             dispatch(AddDialog(Dialog))
     };
