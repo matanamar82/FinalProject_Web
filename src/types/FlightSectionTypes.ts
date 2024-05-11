@@ -1,4 +1,4 @@
-type FlightSectionPoint = {
+export type FlightSectionPoint = {
     distanceFromStart: number,
     elevation: number
 }

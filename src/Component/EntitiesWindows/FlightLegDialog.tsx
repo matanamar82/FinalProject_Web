@@ -5,7 +5,9 @@ import { useDispatch } from "react-redux";
 import { CloseDialog } from "../../state/slices/DialogsSlice";
 import { Dialog, FlightLegProps } from "../../types/DialogTypes";
 import { useEffect, useState } from "react";
-import { CreateSegmentsPointsArr } from "../../FlightSection/FlightSectionFunc";
+import { CreateSegmentsPointsArr } from "../../FlightSection/CreateSegment";
+import { FlightSectionSegmentPoints } from "../../types/FlightSectionTypes";
+import { CreateFlightSection } from "../../FlightSection/CreateFlightSection";
 
 function checkDistance(distance: number): boolean {
     return (distance >= 1000 && distance <= 3000)
@@ -13,24 +15,30 @@ function checkDistance(distance: number): boolean {
 
 const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
     const dispatch = useDispatch();
+    const FeetToMeter = 0.3048;  
+
     const properties = dialog.properties as FlightLegProps;
     const TextFields = dialog.dialog;
     const [SafeElevatiion, setSafeElevation] = useState<number | undefined>(undefined);
     const [ShowSelect, setShowSelect] = useState<Boolean>(false);
-    const [FlightSection, SetFlightSection] = useState<number[]>([])
-    const SegmentsPointsArr = CreateSegmentsPointsArr(properties); 
+    const SafeElevationArr = properties.elevationsArr.map(() => 
+        (Number(properties.maxElevation) + 300*FeetToMeter))
+    const [ShowSafeArr, SetShowSafeArr] = useState<number[] | undefined>(SafeElevationArr);
+    const SegmentsPointsArr:FlightSectionSegmentPoints[] = CreateSegmentsPointsArr(properties);
     let stop = false
     useEffect(() => {
         if(ShowSelect === false)
         {
-            SetFlightSection(properties.elevationsArr.map(() => 
-                (Number(properties.maxElevation) + 300*0.3048)))
+            SetShowSafeArr(SafeElevationArr)
         }
     },[ShowSelect])
 
     useEffect(() => {
         if(SafeElevatiion)
-            SetFlightSection([])
+        {
+            CreateFlightSection(SegmentsPointsArr, [], 0, 0)
+            SetShowSafeArr([])
+        }
     }, [SafeElevatiion])
 
     useEffect(() => {
@@ -71,10 +79,9 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                                 color: 'orange',
                             },
                             {
-                                data: FlightSection,
+                                data: ShowSafeArr,
                                 showMark: false,
-                                connectNulls: true
-                                
+                                connectNulls: true,                                
                             }
                         ]}
                         width={350}

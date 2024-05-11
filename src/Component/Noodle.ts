@@ -41,6 +41,7 @@ export const Noodle = () => {
         else if(LegStartPosition && TrueHeading){
             SelfData.Position = { Latitude: LegStartPosition[1], Longitude: LegStartPosition[0] }
             SelfData.TrueHeading = TrueHeading
+            SelfData.WindSpeed = 0;
             SelfPosition = { latitude: LegStartPosition[1], longitude: LegStartPosition[0] }
         }
         return CreateNoodle();
