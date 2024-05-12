@@ -2,52 +2,67 @@ import { FlightSectionSegmentPoints } from "../types/FlightSectionTypes";
 
 const ToDegrees = 180/Math.PI;
 const FeetToMeter = 0.3048; 
+// let SegmentPointsArr:FlightSectionSegmentPoints[];
 
-export const CreateFlightSection = (SegmentsPointsArr:FlightSectionSegmentPoints[],FlightSectionArr:FlightSectionSegmentPoints[], segmentNumber:number, CheckedSegmentsNumber:number): FlightSectionSegmentPoints[] => 
+export const CreateFlightSection = (SegmentsPointsArr:FlightSectionSegmentPoints[], SafeElevation:number) => 
+{
+    let FlightSectionArr:FlightSectionSegmentPoints[] = []
+
+    for(let i = 0; i<SegmentsPointsArr.length; i++)
     {
-        if(segmentNumber === SegmentsPointsArr.length)
-            return FlightSectionArr;
-        const AngleBetweenPoints:number = getAngleBetweenPoints(SegmentsPointsArr[segmentNumber]);
-        if(AngleBetweenPoints < 10) // כאשר הזווית בין 2 הנקודות קטנה מעשר, אזי ניתן לטפס לגובה של הנקודה המקסימלית ולהתיישר בה
-            FlightSectionArr[segmentNumber] = getMaxElevationPoints(SegmentsPointsArr[segmentNumber])
-        // else if(AngleBetweenPoints >= 10 && AngleBetweenPoints <= 45) // כאשר הזווית בין 2 הנקודות בטווח הנתון, המטוס יבצע טיפוס מנדטורי
-        // {
-    
-        // }
-        // else // כאשר הזווית גדולה מ-45 יש לבצע חישוב שיחזיר לנו את הגובה המינימלי שעל המטוס להיות על מנת לקבל זווית שבטווח.
-        // {
-    
-        // }
-        // // shift tangens = Math.atan() => return in radians => degrees: Math.atan() * (180 / Math.PI)
-        // ביצוע החישובים להצגת חתך הטיסה לאותו המקטע
-        if(CheckedSegmentsNumber === 0)
-            return CreateFlightSection(SegmentsPointsArr, FlightSectionArr, segmentNumber++, CheckedSegmentsNumber++)
-        if(segmentNumber === 0) // אם זה המקטע הראשון 
-            return FlightSectionArr;
-        return CreateFlightSection(SegmentsPointsArr, FlightSectionArr, segmentNumber++, CheckedSegmentsNumber++) // לתקן
+        FlightSectionArr = CheckDegrees(SegmentsPointsArr, i, SafeElevation, [])
     }
-    
-    function getAngleBetweenPoints(SegmentPoints:FlightSectionSegmentPoints):number{
-        const distanceBetweenPoints:number = SegmentPoints.maxElevationPoint.distanceFromStart - SegmentPoints.segmentFirstPoint.distanceFromStart;
-        const elevation:number = SegmentPoints.maxElevationPoint.elevation - SegmentPoints.segmentFirstPoint.elevation;
-        return (360 + Math.atan(elevation / distanceBetweenPoints) * ToDegrees) % 360;
-    
-    }
-    
-    function getMaxElevationPoints(SegmentPoints:FlightSectionSegmentPoints):FlightSectionSegmentPoints{
-        return {
-            segmentFirstPoint: {
-                distanceFromStart: SegmentPoints.segmentFirstPoint.distanceFromStart,
-                elevation: SegmentPoints.maxElevationPoint.elevation
-            },
-            maxElevationPoint: SegmentPoints.maxElevationPoint
-        };
-    }
-    
-    function getElevationForAngleRange(SegmentPoints:FlightSectionSegmentPoints)
+    console.log(FlightSectionArr)
+}
+
+function CheckDegrees(SegmentsPointsArr: FlightSectionSegmentPoints[], i: number, SafeElevation: number, tempSection: FlightSectionSegmentPoints[]): FlightSectionSegmentPoints[] {
+    let AngleBetweenPoints: number = getAngleBetweenPoints(SegmentsPointsArr[i]);
+
+    if (AngleBetweenPoints < 0)
     {
-        while(getAngleBetweenPoints(SegmentPoints) > 45)
-        {
-            SegmentPoints.segmentFirstPoint.elevation += 5 // נגביה את הנקודה ב-5 מטרים כל פעם 
-        }
+        SegmentsPointsArr[i].maxElevationPoint.elevation = SegmentsPointsArr[i].segmentFirstPoint.elevation;
+        SegmentsPointsArr[i].segmentLastPoint.elevation = SegmentsPointsArr[i].segmentFirstPoint.elevation;
+        if(i < SegmentsPointsArr.length - 1)
+            SegmentsPointsArr[i+1].segmentFirstPoint.elevation = SegmentsPointsArr[i].segmentFirstPoint.elevation;
+        return SegmentsPointsArr;
     }
+    else if (AngleBetweenPoints <= 10)
+        return getMaxElevationPoints(SegmentsPointsArr, i);
+    else if (AngleBetweenPoints > 45) {
+        tempSection = getElevationForAngleRange(SegmentsPointsArr, i);
+        if (i === 0)
+            return tempSection;
+        return CheckDegrees(tempSection, i - 1, SafeElevation, tempSection);
+    }
+    return SegmentsPointsArr;
+}
+
+function getAngleBetweenPoints(currentSegmentPoint: FlightSectionSegmentPoints):number
+{
+    let distanceBetweenPoints:number;
+    let elevation:number;
+    distanceBetweenPoints = currentSegmentPoint.maxElevationPoint.distanceFromStart - currentSegmentPoint.segmentFirstPoint.distanceFromStart;
+    elevation = currentSegmentPoint.maxElevationPoint.elevation - currentSegmentPoint.segmentFirstPoint.elevation;
+    if(elevation < 0) // נקודת ההתחלה גבוהה מנקודת המקסימום
+        return elevation;
+    return (360 + Math.atan(elevation / distanceBetweenPoints) * ToDegrees) % 360;
+}
+
+function getMaxElevationPoints(SegmentsPointsArr:FlightSectionSegmentPoints[], i:number):FlightSectionSegmentPoints[]{
+    SegmentsPointsArr[i].segmentFirstPoint.elevation = SegmentsPointsArr[i].maxElevationPoint.elevation;
+    SegmentsPointsArr[i].segmentLastPoint.elevation = SegmentsPointsArr[i].maxElevationPoint.elevation;
+    if(i > 0)
+        SegmentsPointsArr[i-1].segmentLastPoint.elevation = SegmentsPointsArr[i].maxElevationPoint.elevation;
+    if(i<SegmentsPointsArr.length-1)
+        SegmentsPointsArr[i+1].segmentFirstPoint.elevation = SegmentsPointsArr[i].maxElevationPoint.elevation;
+    return SegmentsPointsArr
+}
+
+function getElevationForAngleRange(SegmentsPointsArr: FlightSectionSegmentPoints[], i: number): FlightSectionSegmentPoints[] {
+    while (getAngleBetweenPoints(SegmentsPointsArr[i]) > 45) {
+        SegmentsPointsArr[i].segmentFirstPoint.elevation += 5; // Increase elevation by 5 meters
+        if (i > 0)
+            SegmentsPointsArr[i - 1].segmentLastPoint.elevation += 5;
+    }
+    return SegmentsPointsArr;
+}

@@ -30,13 +30,14 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
         if(ShowSelect === false)
         {
             SetShowSafeArr(SafeElevationArr)
+            setSafeElevation(undefined)
         }
     },[ShowSelect])
 
     useEffect(() => {
         if(SafeElevatiion)
         {
-            CreateFlightSection(SegmentsPointsArr, [], 0, 0)
+            CreateFlightSection(SegmentsPointsArr, SafeElevatiion)
             SetShowSafeArr([])
         }
     }, [SafeElevatiion])
@@ -130,7 +131,7 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                                     dir="rtl"
                                     onChange={(evt) => HandleSafeElevation(evt.target.value)}
                                     sx={{marginRight:'1vw'}}
-                                    value={undefined}
+                                    value={SafeElevatiion?.toString()}
                                 >
                                     <MenuItem value={300} dir="rtl">300 לגים</MenuItem>
                                     <MenuItem value={500} dir="rtl">500 לגים</MenuItem>

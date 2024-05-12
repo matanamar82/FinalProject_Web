@@ -5,5 +5,6 @@ export type FlightSectionPoint = {
 
 export type FlightSectionSegmentPoints = {
     segmentFirstPoint: FlightSectionPoint,
+    segmentLastPoint: FlightSectionPoint,
     maxElevationPoint: FlightSectionPoint
 }
