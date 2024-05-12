@@ -19,33 +19,33 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
 
     const properties = dialog.properties as FlightLegProps;
     const TextFields = dialog.dialog;
-    const [SafeElevatiion, setSafeElevation] = useState<number | undefined>(undefined);
+    const [SafeElevation, setSafeElevation] = useState<number | undefined>(undefined);
     const [ShowSelect, setShowSelect] = useState<Boolean>(false);
     const SafeElevationArr = properties.elevationsArr.map(() => 
         (Number(properties.maxElevation) + 300*FeetToMeter))
-    const [ShowSafeArr, SetShowSafeArr] = useState<number[] | undefined>(SafeElevationArr);
-    const SegmentsPointsArr:FlightSectionSegmentPoints[] = CreateSegmentsPointsArr(properties);
+    const [FlightSectionArr, SetFlightSectionArr] = useState<any[]>(SafeElevationArr);
+    const FlightSectionPoints:FlightSectionSegmentPoints[] = CreateSegmentsPointsArr(properties);
+
     let stop = false
     useEffect(() => {
         if(ShowSelect === false)
         {
-            SetShowSafeArr(SafeElevationArr)
+            SetFlightSectionArr(SafeElevationArr)
             setSafeElevation(undefined)
         }
     },[ShowSelect])
 
     useEffect(() => {
-        if(SafeElevatiion)
+        if(SafeElevation)
         {
-            CreateFlightSection(SegmentsPointsArr, SafeElevatiion)
-            SetShowSafeArr([])
+            SetFlightSectionArr(CreateFlightSection(FlightSectionPoints, SafeElevation*FeetToMeter))
         }
-    }, [SafeElevatiion])
+    }, [SafeElevation])
 
     useEffect(() => {
         if(!stop)
         {
-            console.log(SegmentsPointsArr)
+            console.log(FlightSectionPoints)
             stop = true;
         }
     }, [])
@@ -80,7 +80,7 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                                 color: 'orange',
                             },
                             {
-                                data: ShowSafeArr,
+                                data: FlightSectionArr,
                                 showMark: false,
                                 connectNulls: true,                                
                             }
@@ -131,7 +131,7 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                                     dir="rtl"
                                     onChange={(evt) => HandleSafeElevation(evt.target.value)}
                                     sx={{marginRight:'1vw'}}
-                                    value={SafeElevatiion?.toString()}
+                                    value={SafeElevation?.toString() || ''}
                                 >
                                     <MenuItem value={300} dir="rtl">300 לגים</MenuItem>
                                     <MenuItem value={500} dir="rtl">500 לגים</MenuItem>

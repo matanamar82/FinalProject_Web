@@ -19,13 +19,13 @@ const useCreateDialog = () => {
                 id: FlightLegProps.id,
                 properties: FlightLegProps,
                 dialog: [{
-                    label: "אורך המנחת",
+                    label: "אורך הלג",
                     id: "FlightLegLength",
                     value: FlightLegProps.distance,
                     moreDetails: `${FlightLegProps.distance} מטרים`
                 },
                 {
-                    label: "שם המנחת",
+                    label: "שם הלג",
                     id: "FlightLegName",
                     value: FlightLegProps.name,
                     moreDetails: FlightLegProps.name

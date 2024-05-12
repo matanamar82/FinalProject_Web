@@ -1,6 +1,7 @@
 export type FlightSectionPoint = {
     distanceFromStart: number,
-    elevation: number
+    elevation: number,
+    indexInLegArray: number
 }
 
 export type FlightSectionSegmentPoints = {
