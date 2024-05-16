@@ -17,22 +17,29 @@ export function CreateSegmentsPointsArr(LegProperties:FlightLegProps)
     let NoodleElevations:FlightSectionPoint[][] = []
     let indexInLeg:number = 0;
 
-    const distanceBetweenPoints = LengthOfNoodle / calculatedNoodle.length
-
+    // const distanceBetweenPoints = LengthOfNoodle / calculatedNoodle.length
     for(let k = 0; k < distancesOfNoodleArr.length; k++)
     {
         NoodleElevations[k] = [];
-
-        for(let j = 0; j < distancesOfNoodleArr[k].length; j++)
-        {
-            const {FlightSectionPoint, i} = GetNoodlePointElevation(distancesOfNoodleArr[k][j], LegProperties, indexInLeg);
-            indexInLeg = i;
-            NoodleElevations[k][j] = FlightSectionPoint;
-        }
+        let {SectionElevationArr, i} = GetElevationsInSection(
+            distancesOfNoodleArr[k][distancesOfNoodleArr[k].length - 1], 
+            indexInLeg, 
+            LegProperties
+        )
+        indexInLeg = i;
+        NoodleElevations[k] = SectionElevationArr
+        // for(let j = 0; j < distancesOfNoodleArr[k].length; j++)
+        // {
+        //     const {FlightSectionPoint, i} = GetNoodlePointElevation(distancesOfNoodleArr[k][j], LegProperties, indexInLeg);
+        //     indexInLeg = i;
+        //     NoodleElevations[k][j] = FlightSectionPoint;
+        // }
     }
 
+    // console.log(NoodleElevations)
+
     let FlightSectionPoints:FlightSectionSegmentPoints[] = []
-    // console.log("start max:")
+
     for(let k = 0; k < NoodleElevations.length; k++)
     {
         FlightSectionPoints[k] = {
@@ -68,8 +75,11 @@ function getNoodleWithLegLength(LegProperties:FlightLegProps)
 
     while(LengthOfNoodle < LegLength)
     {
-        calculatedNoodle = NoodleCalc(undefined, calculatedNoodle[calculatedNoodle.length - 1], TrueHeading)
-        calculatedNoodle.shift()
+        const NewStart = calculatedNoodle[calculatedNoodle.length - 1]
+        const tempNoodle = NoodleCalc(undefined, NewStart, TrueHeading)
+        tempNoodle.shift()
+
+        calculatedNoodle = calculatedNoodle.concat(tempNoodle) 
         LengthOfNoodle = getDistance(
             LegStartCoordinates, 
             {latitude: calculatedNoodle[calculatedNoodle.length - 1][1], longitude: calculatedNoodle[calculatedNoodle.length - 1][0]}
@@ -143,6 +153,24 @@ function getDistanceArrayFromNoodle(calculatedNoodle:Position[], LengthOfNoodle:
     return {distancesOfNoodleArr}
 }
 
+function GetElevationsInSection(endSectionDistance:number, endIndexInLeg:number, LegProperties:FlightLegProps)
+{
+    let SectionElevationArr:FlightSectionPoint[] = [];
+    let LegArr = LegProperties.distancesArr;
+    let LegElevations = LegProperties.elevationsArr;
+    let i = endIndexInLeg;
+    while(LegArr[i] <= endSectionDistance)
+    {
+        SectionElevationArr.push({
+            distanceFromStart: LegArr[i],
+            elevation: LegElevations[i],
+            indexInLegArray: i
+        })
+        i++;
+    }
+    i--;
+    return {SectionElevationArr, i}
+}
 
 function GetNoodlePointElevation(distanceFromStart:number, LegProperties:FlightLegProps, indexInLeg:number){
     let FlightSectionPoint:FlightSectionPoint;
@@ -156,10 +184,12 @@ function GetNoodlePointElevation(distanceFromStart:number, LegProperties:FlightL
                 const CheckPreviousPoint =  LegProperties.distancesArr[i-1] / distanceFromStart
                 // LegProperties.elevationsArr[i-1] == LegProperties.maxElevation
                 if(LegProperties.elevationsArr[i] == Number(LegProperties.maxElevation))
+                {
                     FlightSectionPoint = {
-                distanceFromStart: distanceFromStart, 
-                elevation: LegProperties.elevationsArr[i], 
-                indexInLegArray: i}
+                        distanceFromStart: distanceFromStart, 
+                        elevation: LegProperties.elevationsArr[i], 
+                        indexInLegArray: i}
+                }  
                 else if (LegProperties.elevationsArr[i-1] == Number(LegProperties.maxElevation))
                 {
                     FlightSectionPoint = {
@@ -204,13 +234,10 @@ function GetNoodlePointElevation(distanceFromStart:number, LegProperties:FlightL
     return {FlightSectionPoint, i}
 }
 
-
 function MaxElevationPointInSegment(FlightSectionPointArr:FlightSectionPoint[]):FlightSectionPoint{
     const Elevations = FlightSectionPointArr.map(point => point.elevation)
     Elevations.shift();
-    // console.log(Elevations)
     const maxElevation = Math.max(...Elevations)
-    // console.log(`the max is: ${maxElevation}`)
     const maxElevationPoint = FlightSectionPointArr.find(Point => Point.elevation === maxElevation)
     if(maxElevationPoint)
         return maxElevationPoint

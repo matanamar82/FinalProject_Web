@@ -8,7 +8,7 @@ export const CreateFlightSection = (SegmentsPointsArr:FlightSectionSegmentPoints
 {
     let FlightSectionArr:FlightSectionSegmentPoints[] = []
     let SectionElevationsArr = [];
-    console.log(SegmentsPointsArr.length)
+    // console.log(SegmentsPointsArr.length)
     for(let i = 0; i<SegmentsPointsArr.length; i++)
     {
         FlightSectionArr = CheckDegrees(SegmentsPointsArr, i, [])
@@ -20,13 +20,13 @@ export const CreateFlightSection = (SegmentsPointsArr:FlightSectionSegmentPoints
     {
         startIndex = FlightSectionArr[i].segmentFirstPoint.indexInLegArray;
         endIndex = FlightSectionArr[i].maxElevationPoint.indexInLegArray;
-        // SectionElevationsArr.push(FlightSectionArr[i].segmentFirstPoint.elevation) לבדוק את חתך הטיסה ככה
+        // SectionElevationsArr.push(FlightSectionArr[i].segmentFirstPoint.elevation)
         SectionElevationsArr.push(FlightSectionArr[i].segmentFirstPoint.elevation + SafeElevation)
         for(let j = startIndex + 1; j < endIndex; j++)
             SectionElevationsArr.push(null);
         if(startIndex !== endIndex)
             SectionElevationsArr.push(FlightSectionArr[i].maxElevationPoint.elevation + SafeElevation)
-        // if(startIndex !== endIndex) לבדוק את חתך הטיסה ככה
+        // if(startIndex !== endIndex)
         //     SectionElevationsArr.push(FlightSectionArr[i].maxElevationPoint.elevation)
         startIndex = SectionElevationsArr.length;
         endIndex = FlightSectionArr[i].segmentLastPoint.indexInLegArray;
@@ -39,7 +39,8 @@ export const CreateFlightSection = (SegmentsPointsArr:FlightSectionSegmentPoints
         SectionElevationsArr.push(FlightSectionArr[FlightSectionArr.length - 1].segmentLastPoint.elevation)
     while(SectionElevationsArr.length > 60)
         SectionElevationsArr.pop()
-        
+    
+    // console.log(SectionElevationsArr)
     return SectionElevationsArr;
 }
 

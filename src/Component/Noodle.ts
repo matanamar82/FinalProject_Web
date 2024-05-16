@@ -29,7 +29,6 @@ export const Noodle = () => {
         PitchAngle: 0,
         GroundSpeed: 100,
     };
-    let Noodle: Position[] = [];
     let RollAngle: number;
     let SelfPosition: GeolibInputCoordinates = { latitude: 0, longitude: 0 };
 
@@ -48,6 +47,7 @@ export const Noodle = () => {
     }
 
     function CreateNoodle(): Position[] {
+        let Noodle: Position[] = [];
         RollAngle = SelfData.RollAngle;
         CalculateNoodle();
         Noodle.push([SelfData.Position.Longitude, SelfData.Position.Latitude])
