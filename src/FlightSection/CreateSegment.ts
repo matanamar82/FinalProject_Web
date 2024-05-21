@@ -172,68 +172,6 @@ function GetElevationsInSection(endSectionDistance:number, endIndexInLeg:number,
     return {SectionElevationArr, i}
 }
 
-function GetNoodlePointElevation(distanceFromStart:number, LegProperties:FlightLegProps, indexInLeg:number){
-    let FlightSectionPoint:FlightSectionPoint;
-    for(let i = indexInLeg; i < LegProperties.distancesArr.length; i++)
-    {
-        if(distanceFromStart <= LegProperties.distancesArr[i])
-        {
-            if(i !== 0)
-            {
-                const CheckCurrentPoint = distanceFromStart / LegProperties.distancesArr[i]
-                const CheckPreviousPoint =  LegProperties.distancesArr[i-1] / distanceFromStart
-                // LegProperties.elevationsArr[i-1] == LegProperties.maxElevation
-                if(LegProperties.elevationsArr[i] == Number(LegProperties.maxElevation))
-                {
-                    FlightSectionPoint = {
-                        distanceFromStart: distanceFromStart, 
-                        elevation: LegProperties.elevationsArr[i], 
-                        indexInLegArray: i}
-                }  
-                else if (LegProperties.elevationsArr[i-1] == Number(LegProperties.maxElevation))
-                {
-                    FlightSectionPoint = {
-                        distanceFromStart: distanceFromStart, 
-                        elevation: LegProperties.elevationsArr[i-1],
-                        indexInLegArray: i-1
-                    }
-                    i = i - 1
-                }
-                else if((CheckCurrentPoint < CheckPreviousPoint) && (LegProperties.elevationsArr[i] !== Number(LegProperties.maxElevation))) // הנקודה קרובה יותר לנקודה הנוכחית 
-                {
-                    
-                    FlightSectionPoint = {
-                        distanceFromStart: distanceFromStart, 
-                        elevation: LegProperties.elevationsArr[i-1],
-                        indexInLegArray: i-1
-                    }
-                    i = i - 1
-                }
-                else
-                    FlightSectionPoint = {
-                distanceFromStart: distanceFromStart, 
-                elevation: LegProperties.elevationsArr[i],
-                indexInLegArray: i
-            }
-            }
-            else
-                FlightSectionPoint = {
-            distanceFromStart: distanceFromStart, 
-            elevation: LegProperties.elevationsArr[i],
-            indexInLegArray: i
-        };
-            return {FlightSectionPoint, i};
-        }
-    }
-    FlightSectionPoint = {
-        distanceFromStart: distanceFromStart, 
-        elevation: LegProperties.elevationsArr[LegProperties.distancesArr.length - 1],
-        indexInLegArray: LegProperties.distancesArr.length - 1
-    }
-    let i = LegProperties.distancesArr.length
-    return {FlightSectionPoint, i}
-}
-
 function MaxElevationPointInSegment(FlightSectionPointArr:FlightSectionPoint[]):FlightSectionPoint{
     const Elevations = FlightSectionPointArr.map(point => point.elevation)
     Elevations.shift();

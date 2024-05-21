@@ -2,6 +2,8 @@ import { useMap, Source, Layer } from "react-map-gl";
 import { useEffect, useRef } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import selfPlane from '../Assets/Plane1.png'
+// import selfPlane from '../Assets/planeIcon.png'
+
 import { Feature } from "geojson";
 import { Noodle } from "./Noodle";
 import { useDispatch, useSelector } from "react-redux";

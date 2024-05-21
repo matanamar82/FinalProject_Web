@@ -83,10 +83,6 @@ export const Noodle = () => {
         }
     }
 
-    // function SetTurnFromSelfData(): void {
-    //     RollAngle = SelfData.RollAngle;
-    // }
-
     function GetRateOfTurn(): number {
         return (gravity * Math.tan(Math.abs(RollAngle) * ToRadian) * ToDegrees) / SelfData.GroundSpeed;
     }
@@ -126,7 +122,6 @@ export const Noodle = () => {
         }
         const tempNoodle: Position[] = CreateNoodle();
         let noodle: Position[] = [];
-        debugger
         let isFound: boolean = false;
         for (let i = 0; i < AmountOfPoints - 1; i += 2) {
             noodle.push(tempNoodle[i]);

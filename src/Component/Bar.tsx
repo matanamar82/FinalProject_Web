@@ -46,7 +46,7 @@ export const Bar = () => {
       >
         <Toolbar />
         <List sx={{ overflowY: 'auto' }}>
-          <ListItem sx={{ justifyContent: 'center' }}>
+          {/* <ListItem sx={{ justifyContent: 'center' }}>
             <Tooltip title="הצג מטוס" placement='left'>
               <IconButton onClick={HandleShow}>
                 <FlightIcon sx={{ fontSize: '40px' }} />
@@ -60,7 +60,7 @@ export const Bar = () => {
               </ListItem>
             </List>
           </Collapse>
-          <Divider />
+          <Divider /> */}
           <ListItem sx={{ justifyContent: 'center' }}>
             <Tooltip title="בחר לג טיסה" placement='left'>
               <IconButton onClick={() => dispatch(FlightLeg())}>

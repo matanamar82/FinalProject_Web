@@ -34,13 +34,18 @@ export const CreateFlightSection = (SegmentsPointsArr:FlightSectionSegmentPoints
         for(let j = startIndex; j < endIndex; j++)
             SectionElevationsArr.push(null);
     }
-
-    while(SectionElevationsArr.length < 60)
-        SectionElevationsArr.push(FlightSectionArr[FlightSectionArr.length - 1].segmentLastPoint.elevation)
-    while(SectionElevationsArr.length > 60)
-        SectionElevationsArr.pop()
     
-    // console.log(SectionElevationsArr)
+    SectionElevationsArr.push(FlightSectionArr[FlightSectionArr.length - 1].segmentLastPoint.elevation + SafeElevation)
+    while(SectionElevationsArr.length < 60)
+    {
+        console.log(SectionElevationsArr.length)
+        SectionElevationsArr.push(FlightSectionArr[FlightSectionArr.length - 1].segmentLastPoint.elevation)
+    }
+
+    while(SectionElevationsArr.length > 60)
+    {
+        SectionElevationsArr.pop()
+    }
     return SectionElevationsArr;
 }
 

@@ -38,7 +38,8 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
     useEffect(() => {
         if(SafeElevation)
         {
-            SetFlightSectionArr(CreateFlightSection(FlightSectionPoints, SafeElevation*FeetToMeter))
+            let FlightSection = CreateFlightSection(FlightSectionPoints, SafeElevation*FeetToMeter)
+            SetFlightSectionArr(FlightSection)
         }
     }, [SafeElevation])
 
@@ -133,9 +134,9 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
                                     sx={{marginRight:'1vw'}}
                                     value={SafeElevation?.toString() || ''}
                                 >
-                                    <MenuItem value={300} dir="rtl">300 לגים</MenuItem>
-                                    <MenuItem value={500} dir="rtl">500 לגים</MenuItem>
-                                    <MenuItem value={1000} dir="rtl">1000 לגים</MenuItem>
+                                    <MenuItem value={300} dir="rtl">90 מטרים (300 רגל)</MenuItem>
+                                    <MenuItem value={500} dir="rtl">150 מטרים (500 רגל)</MenuItem>
+                                    <MenuItem value={1000} dir="rtl">300 מטרים (1000 רגל)</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControlLabel
