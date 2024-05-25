@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import { Bar } from './Component/Bar';
 import { MapBox } from './Component/MapBox';

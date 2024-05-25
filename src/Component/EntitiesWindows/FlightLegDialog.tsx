@@ -66,14 +66,20 @@ const FlightLegDialog = ({ dialog } : { dialog: Dialog }) => {
             >
                 <Box>
                     <LineChart
-                        // ציר x = המרחקים
-                        xAxis={[{ data: properties.distancesArr }]}
+                        sx={{marginLeft: '5%'}}
+
+                        xAxis={[{ 
+                            data: properties.distancesArr,
+                            label: "Distance from start (meters)"
+                        }]}
+                        yAxis={[{
+                            label: "Height (meters)",
+                        }]}
                         series={[
                             {
-                                // ציר y = הגבהים
                                 data: properties.elevationsArr,
                                 area: true,
-                                showMark: false,                                
+                                showMark: false,  
                             },
                             {
                                 data: properties.elevationsArr.map(elevation => 

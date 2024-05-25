@@ -12,9 +12,4 @@ export const FlightLegLayer: LineLayer = {
         'line-width': 1.5,
         'line-offset': -4
     },
-    // filter: [
-    //     'all',
-    //     ['==', ['geometry-type'], 'LineString'],
-    //     ['==', ['get', 'entityType'],'FlightLeg']
-    // ]
 }

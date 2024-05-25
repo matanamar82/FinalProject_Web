@@ -2,13 +2,12 @@ import { FlightSectionSegmentPoints } from "../types/FlightSectionTypes";
 
 const ToDegrees = 180/Math.PI;
 const FeetToMeter = 0.3048; 
-// let SegmentPointsArr:FlightSectionSegmentPoints[];
 
 export const CreateFlightSection = (SegmentsPointsArr:FlightSectionSegmentPoints[], SafeElevation:number) => 
 {
     let FlightSectionArr:FlightSectionSegmentPoints[] = []
     let SectionElevationsArr = [];
-    // console.log(SegmentsPointsArr.length)
+
     for(let i = 0; i<SegmentsPointsArr.length; i++)
     {
         FlightSectionArr = CheckDegrees(SegmentsPointsArr, i, [])
@@ -20,14 +19,12 @@ export const CreateFlightSection = (SegmentsPointsArr:FlightSectionSegmentPoints
     {
         startIndex = FlightSectionArr[i].segmentFirstPoint.indexInLegArray;
         endIndex = FlightSectionArr[i].maxElevationPoint.indexInLegArray;
-        // SectionElevationsArr.push(FlightSectionArr[i].segmentFirstPoint.elevation)
         SectionElevationsArr.push(FlightSectionArr[i].segmentFirstPoint.elevation + SafeElevation)
         for(let j = startIndex + 1; j < endIndex; j++)
             SectionElevationsArr.push(null);
         if(startIndex !== endIndex)
             SectionElevationsArr.push(FlightSectionArr[i].maxElevationPoint.elevation + SafeElevation)
-        // if(startIndex !== endIndex)
-        //     SectionElevationsArr.push(FlightSectionArr[i].maxElevationPoint.elevation)
+
         startIndex = SectionElevationsArr.length;
         endIndex = FlightSectionArr[i].segmentLastPoint.indexInLegArray;
         
@@ -92,7 +89,7 @@ function getMaxElevationPoints(SegmentsPointsArr:FlightSectionSegmentPoints[], i
 
 function getElevationForAngleRange(SegmentsPointsArr: FlightSectionSegmentPoints[], i: number): FlightSectionSegmentPoints[] {
     while (getAngleBetweenPoints(SegmentsPointsArr[i]) > 45) {
-        SegmentsPointsArr[i].segmentFirstPoint.elevation += 5; // Increase elevation by 5 meters
+        SegmentsPointsArr[i].segmentFirstPoint.elevation += 5;
         if (i > 0)
             SegmentsPointsArr[i - 1].segmentLastPoint.elevation += 5;
     }

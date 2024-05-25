@@ -3,8 +3,6 @@ import { computeDestinationPoint, getDistance, getRhumbLineBearing } from "geoli
 import { number } from "mathjs";
 import getElevations from "../Component/GetElevations";
 
-// wing length = 25m
-
 export const useFlightLegCalc = () => {
     
     const getFlightLegElevations = async(selfCoordinates:Position, destCoordinates:Position) => {
@@ -18,19 +16,15 @@ export const useFlightLegCalc = () => {
                 {latitude: destCoordinates[1], longitude: destCoordinates[0]})    
     
             const distanceFromPoint = longDistance / 59 
-            // center 
+            
             const CenterPoints:string[] = getPointsInZone(selfCoordinates, destCoordinates, distanceFromPoint, Azimuth)
             
-            // right wing
             let { selfPoint: rightWingSelf, destPoint: rightWingDest } = getWingPoints(selfCoordinates, destCoordinates, Azimuth + 90);
             const RightWingPoints:string[] = getPointsInZone(rightWingSelf, rightWingDest, distanceFromPoint, Azimuth);
     
-            // left wing
             let {selfPoint: leftWingSelf, destPoint: leftWingDest} = getWingPoints(selfCoordinates, destCoordinates, Azimuth - 90);
             const LeftWingPoints:string[] = getPointsInZone(leftWingSelf, leftWingDest, distanceFromPoint, Azimuth);
-            
-            // const CenterElevation = await getElevationsArr(CenterPoints)
-    
+                
             const CenterElevation = await getElevations(CenterPoints)
             
             const RightWingElevation = await getElevations(RightWingPoints)
@@ -78,10 +72,7 @@ export const useFlightLegCalc = () => {
     const getPointsInZone = (selfCoordinates:Position, destCoordinates:Position, distanceFromPoint:number, Azimuth:number): string[] => {
         
         const PointsInZone:string[] = [];
-        // *****************************************************************
-        // selfCoordinates[0] === longitude 
-        // selfCoordinates[1] === latitude
-        // *****************************************************************
+        
 
         PointsInZone[0] = `${selfCoordinates[1]},${selfCoordinates[0]}|`
         PointsInZone[59] = `${destCoordinates[1]},${destCoordinates[0]}|`

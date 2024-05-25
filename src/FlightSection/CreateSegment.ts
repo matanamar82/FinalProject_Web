@@ -17,7 +17,6 @@ export function CreateSegmentsPointsArr(LegProperties:FlightLegProps)
     let NoodleElevations:FlightSectionPoint[][] = []
     let indexInLeg:number = 0;
 
-    // const distanceBetweenPoints = LengthOfNoodle / calculatedNoodle.length
     for(let k = 0; k < distancesOfNoodleArr.length; k++)
     {
         NoodleElevations[k] = [];
@@ -28,15 +27,7 @@ export function CreateSegmentsPointsArr(LegProperties:FlightLegProps)
         )
         indexInLeg = i;
         NoodleElevations[k] = SectionElevationArr
-        // for(let j = 0; j < distancesOfNoodleArr[k].length; j++)
-        // {
-        //     const {FlightSectionPoint, i} = GetNoodlePointElevation(distancesOfNoodleArr[k][j], LegProperties, indexInLeg);
-        //     indexInLeg = i;
-        //     NoodleElevations[k][j] = FlightSectionPoint;
-        // }
     }
-
-    // console.log(NoodleElevations)
 
     let FlightSectionPoints:FlightSectionSegmentPoints[] = []
 

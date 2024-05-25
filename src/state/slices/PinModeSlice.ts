@@ -17,7 +17,6 @@ const pinModeSlice = createSlice({
     name: "pinMode",
     initialState,
 
-    // actions
     reducers: {
         FlightLeg: (state) => {
             state.option = 'FlightLeg'

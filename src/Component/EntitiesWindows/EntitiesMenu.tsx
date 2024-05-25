@@ -84,7 +84,7 @@ export default function EntitiesMenu({ EntityPoint, DecreaseMenuesCounter, Entit
         <ListItemIcon>
           <ZoomOutMapIcon fontSize="small" />
         </ListItemIcon>
-        הרחבת נתונים - דיאלוג
+        הרחבת נתונים
       </MenuItem>
       {
         Entity.geometry.type === 'Point' && [
@@ -94,12 +94,6 @@ export default function EntitiesMenu({ EntityPoint, DecreaseMenuesCounter, Entit
             </ListItemIcon>
             Direct
           </MenuItem>,
-          <MenuItem key="height">
-            <ListItemIcon>
-              <HeightIcon fontSize="small" />
-            </ListItemIcon>
-            חשב גובה הצנחה
-          </MenuItem>
         ]
       }
 

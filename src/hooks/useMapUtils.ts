@@ -19,28 +19,5 @@ export const useMapUtils = () => {
         return features;
     };
 
-    // const findPositionCoordinateIndex = (coordinates: LineStringPoint[], position: Position) => {
-    //     return coordinates.findIndex(
-    //         point => 
-    //             point.coordinate.longitude.toFixed(2) === position[0].toFixed(2) && 
-    //             point.coordinate.latitude.toFixed(2) === position[1].toFixed(2)
-    //     );
-    // };
-
-    // const generateNewPoint = (
-    //     entityType: EntityType,
-    //     lnglat: LngLat
-    // ): LineStringPoint | RoutePoint => {
-    //     const newPoint = {
-    //         id: Math.round(Math.random() * 100000000).toString(),
-    //         coordinate: {
-    //             longitude: lnglat.lng,
-    //             latitude: lnglat.lat
-    //         }
-    //     };
-
-    //     return entityType !== entityTypes.ROUTE ? newPoint: {...newPoint, name: 'POINT_NAME'};
-    // };
-
     return { getFeaturesAroundPoint };
 };

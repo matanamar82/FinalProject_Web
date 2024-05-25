@@ -2,7 +2,6 @@ import { useMap, Source, Layer } from "react-map-gl";
 import { useEffect, useRef } from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import selfPlane from '../Assets/Plane1.png'
-// import selfPlane from '../Assets/planeIcon.png'
 
 import { Feature } from "geojson";
 import { Noodle } from "./Noodle";
@@ -53,7 +52,6 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
     }
   }
   const fetchForSelfData = () => {
-    // console.log(currMap?.listImages())
     console.log("trying to connect to SelfData");
     selfDataClient.onopen = () => {
       console.log("Client Connected to SelfData!");
@@ -61,7 +59,6 @@ const FetchSelfData = ({ center, isCenter, setIsConnect }: any) => {
     selfDataClient.onmessage = (message) => {
       const data = JSON.parse(message.data.toString());
       dispatch(setSelfData(data))
-      // console.log("data from 65 line: ")
       dispatch(setSelfDataSource({
         coordinates: [data.Position.Longitude, data.Position.Latitude],
         callSign: data.CallSign,
